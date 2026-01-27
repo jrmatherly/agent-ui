@@ -1,0 +1,87 @@
+# Dependencies (installed in container)
+node_modules
+
+# Build output (built in container)
+.next
+out
+
+# Git
+.git
+.gitignore
+.github
+
+# Environment files (secrets - never copy)
+.env
+.env.*
+!.env.example
+
+# IDE/Editor
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Certificates and keys (never copy to images)
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+
+# Documentation (not needed in image)
+.docs
+docs
+*.md
+!README.md
+
+# Docker files (not needed inside images)
+Dockerfile*
+compose*.yaml
+docker-compose*.yaml
+example.compose.yaml
+
+# Scripts (not needed in production image)
+scripts
+
+# AI tooling
+.serena
+.claude
+.gemini
+
+# Testing/Development
+coverage
+.turbo
+*.log
+test-results
+
+# E2E tests (not needed in production)
+e2e
+playwright.config.ts
+
+# Mise (local tooling)
+.mise
+mise.local.toml
+mise.toml
+mise.lock
+
+playwright-report
+
+# Infrastructure (not needed in image)
+helm
+k8s
+
+# Project documentation files
+CLAUDE.md
+CONTRIBUTING.md
+PROJECT_INDEX.json
+PROJECT_INDEX.md

@@ -1,0 +1,95 @@
+{
+  "name": "agent-ui",
+  "version": "0.3.3",
+  "description": "Chat interface for AgentOS",
+  "generated": "2026-01-27",
+  "stack": {
+    "framework": "Next.js 16.1.5",
+    "ui": "React 19.2.4",
+    "language": "TypeScript 5",
+    "styling": "Tailwind CSS 4.1.18",
+    "state": "Zustand 5.0.10",
+    "auth": "Better Auth 1.4.17",
+    "orm": "Drizzle 0.45.1"
+  },
+  "ports": { "dev": 3000 },
+  "entryPoints": {
+    "authGate": "proxy.ts",
+    "store": "src/store.ts",
+    "apiClient": "src/api/os.ts",
+    "types": "src/types/os.ts",
+    "authConfig": "src/lib/auth.ts"
+  },
+  "routes": [
+    { "path": "/login", "auth": false },
+    { "path": "/", "auth": true, "desc": "Dashboard" },
+    { "path": "/chat", "auth": true },
+    { "path": "/admin", "auth": true, "role": "admin" },
+    { "path": "/profile", "auth": true },
+    { "path": "/knowledge", "auth": true }
+  ],
+  "hooks": [
+    { "name": "useChatActions", "purpose": "Chat operations" },
+    { "name": "useAIResponseStream", "purpose": "SSE streaming" },
+    { "name": "useAIStreamHandler", "purpose": "Event routing" },
+    { "name": "useSessionLoader", "purpose": "Session management" },
+    { "name": "useSSOProviders", "purpose": "SSO providers" },
+    { "name": "useKnowledgeBases", "purpose": "KB operations" }
+  ],
+  "libModules": [
+    { "path": "lib/auth.ts", "exports": ["auth"] },
+    {
+      "path": "lib/permissions.ts",
+      "exports": ["Role", "hasPermission", "hasRole"]
+    },
+    {
+      "path": "lib/agentos/",
+      "exports": ["client", "jwt", "tokenStore", "scopes"]
+    },
+    { "path": "lib/sso/", "exports": ["providerService", "types"] },
+    { "path": "lib/knowledge/", "exports": ["service", "agentosClient"] },
+    { "path": "lib/webhooks/", "exports": ["dispatcher", "service"] },
+    { "path": "lib/audit/", "exports": ["logger", "siemExporter"] }
+  ],
+  "apiClient": {
+    "file": "src/api/os.ts",
+    "functions": [
+      "getAgentsAPI",
+      "getTeamsAPI",
+      "getStatusAPI",
+      "getSessionAPI",
+      "getAllSessionsAPI",
+      "deleteSessionAPI"
+    ]
+  },
+  "components": {
+    "ui": "src/components/ui/",
+    "chat": "src/components/chat/",
+    "dashboard": "src/components/dashboard/",
+    "auth": "src/components/auth/",
+    "knowledge": "src/components/knowledge/",
+    "enterprise": "src/components/enterprise/"
+  },
+  "env": {
+    "required": [
+      "BETTER_AUTH_SECRET",
+      "DATABASE_URL",
+      "NEXT_PUBLIC_AGENT_OS_URL"
+    ],
+    "optional": ["ADMIN_EMAIL", "ADMIN_PASSWORD", "AGENTOS_JWT_PRIVATE_KEY"]
+  },
+  "commands": {
+    "dev": "mise dev",
+    "build": "mise build",
+    "validate": "mise validate",
+    "test": "mise test",
+    "testE2e": "mise test:e2e"
+  },
+  "docs": [
+    "ARCHITECTURE.md",
+    "API.md",
+    "COMPONENTS.md",
+    "HOOKS.md",
+    "DEVELOPER_GUIDE.md"
+  ]
+}

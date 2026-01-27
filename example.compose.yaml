@@ -1,0 +1,56 @@
+# example.compose.yaml
+#
+# Example: Connect agent-ui to external agentos-docker backend
+#
+# Prerequisites:
+#   1. agentos-docker running: cd /path/to/agentos-docker && docker compose --profile redis up -d
+#   2. agent_ui database created: copy dev/postgres/init-shared.sql to agentos-docker/db/init/
+#
+# Usage:
+#   cp example.compose.yaml compose.local.yaml
+#   docker compose -f compose.local.yaml up db-init   # First time only
+#   docker compose -f compose.local.yaml up agent-ui
+#
+# See docs/AGENTOS_BACKEND.md for all connectivity options.
+
+name: agent-ui
+
+services:
+  # Database initialization (run once to create tables)
+  db-init:
+    image: ghcr.io/jrmatherly/agent-ui-db-init:latest
+    # Or build locally:
+    # build:
+    #   context: .
+    #   dockerfile: docker/db-init/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://agno:agno@host.docker.internal:5432/agent_ui
+      - DB_MAX_RETRIES=30
+      - DB_RETRY_INTERVAL=2
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    # Exits after initialization
+    restart: 'no'
+    profiles:
+      - init
+
+  agent-ui:
+    image: ghcr.io/jrmatherly/agent-ui:latest
+    # Or build locally:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      # AgentOS API (via host gateway)
+      - NEXT_PUBLIC_AGENT_OS_URL=http://host.docker.internal:8000
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      # Auth
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-dev-secret-change-in-production}
+      # Shared PostgreSQL (agentos-docker), separate database
+      - DATABASE_URL=postgresql://agno:agno@host.docker.internal:5432/agent_ui
+      # Shared Redis (agentos-docker)
+      - REDIS_URL=redis://host.docker.internal:6379
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

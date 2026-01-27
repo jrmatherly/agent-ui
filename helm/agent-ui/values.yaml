@@ -1,0 +1,138 @@
+# Default values for agent-ui
+replicaCount: 2
+
+image:
+  repository: agent-ui
+  pullPolicy: IfNotPresent
+  tag: ''
+
+imagePullSecrets: []
+nameOverride: ''
+fullnameOverride: ''
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ''
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts:
+    - host: agent-ui.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+pdb:
+  enabled: true
+  minAvailable: 1
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Application configuration
+config:
+  nodeEnv: production
+  agentOSUrl: http://agentos:7777
+  nextPublicAppUrl: https://agent-ui.example.com
+
+# Secrets (should be provided via external secret management)
+secrets:
+  # Set to true to create secret from values (not recommended for production)
+  create: false
+  # External secret name to use
+  existingSecret: ''
+  # Values (only used if create: true)
+  databaseUrl: ''
+  betterAuthSecret: ''
+  # SSO configuration
+  entraClientId: ''
+  entraClientSecret: ''
+  entraTenantId: ''
+
+# Database configuration
+database:
+  # Use external database
+  external: true
+  # Connection details (if not using existingSecret)
+  host: ''
+  port: 5432
+  name: agent_ui
+  user: ''
+  sslMode: require
+
+# Redis configuration (optional)
+redis:
+  enabled: false
+  external: true
+  host: ''
+  port: 6379
+
+# Database initialization job
+dbInit:
+  # Enable to run schema migrations before deployment
+  enabled: true
+  image:
+    # Defaults to {image.repository}-db-init:{image.tag}
+    repository: ''
+    tag: ''
+    pullPolicy: IfNotPresent
+  # Retry configuration for database readiness
+  maxRetries: 30
+  retryInterval: 2
+  # Job cleanup
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 3
+  resources:
+    requests:
+      memory: '256Mi'
+      cpu: '100m'
+    limits:
+      memory: '512Mi'
+      cpu: '500m'
+
+# Observability
+observability:
+  enabled: false
+  otlpEndpoint: ''

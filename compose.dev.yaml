@@ -1,0 +1,161 @@
+# =============================================================================
+# Agent UI - Standalone Development Environment
+# =============================================================================
+#
+# This compose file is for ad-hoc agent-ui development WITHOUT agentos-docker.
+#
+# RECOMMENDED: Use the workspace root compose.yaml with agentos-docker for
+# full-stack development. This ensures consistency with production setup.
+#
+# USE THIS WHEN:
+#   - Working on agent-ui frontend only
+#   - Don't need backend API functionality
+#   - Quick prototyping or UI development
+#
+# Usage:
+#   docker compose -f compose.dev.yaml up
+#
+# =============================================================================
+
+name: agent-ui-dev
+
+services:
+  # Database initialization (creates tables via Drizzle)
+  db-init:
+    image: ghcr.io/jrmatherly/agent-ui-db-init:latest
+    build:
+      context: .
+      dockerfile: docker/db-init/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://agno:agno@postgres:5432/agent_ui
+      - DB_MAX_RETRIES=30
+      - DB_RETRY_INTERVAL=2
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+
+  # Frontend
+  agent-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - '3000:3000'
+    healthcheck:
+      test:
+        ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    environment:
+      - NEXT_PUBLIC_AGENT_OS_URL=http://agent-os:7777
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-dev-secret-change-in-production}
+      - DATABASE_URL=postgresql://agno:agno@postgres:5432/agent_ui
+      - REDIS_URL=redis://redis:6379
+      # Fail-safe admin account (auto-created on first startup)
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@localhost}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+
+  # Backend (AgentOS) - Optional, for full-stack standalone dev
+  agent-os:
+    image: ghcr.io/jrmatherly/agentos:latest
+    ports:
+      - '7777:7777'
+    environment:
+      - DATABASE_URL=postgresql://agno:agno@postgres:5432/agno
+      - REDIS_URL=redis://redis:6379
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - JWT_VERIFICATION_KEY=${JWT_VERIFICATION_KEY:-dev-jwt-key}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    profiles:
+      - full-stack
+
+  # Identity Provider (Keycloak - Dev)
+  keycloak:
+    image: quay.io/keycloak/keycloak:26
+    command: start-dev --import-realm
+    ports:
+      - '8080:8080'
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HEALTH_ENABLED=true
+    volumes:
+      - ./dev/keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
+    healthcheck:
+      test: ['CMD-SHELL', 'exec 3<>/dev/tcp/127.0.0.1/8080']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    profiles:
+      - sso
+
+  # PostgreSQL with pgvector (standardized image)
+  postgres:
+    image: agnohq/pgvector:18
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=agno
+      - POSTGRES_PASSWORD=agno
+      - POSTGRES_DB=agent_ui
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # No SQL init mount - db-init handles extensions
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U agno -d agent_ui']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Redis (standardized image)
+  redis:
+    image: redis:8-alpine
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # OpenTelemetry Collector (Dev Observability)
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    ports:
+      - '4317:4317' # OTLP gRPC
+      - '4318:4318' # OTLP HTTP
+    volumes:
+      - ./dev/otel/config.yaml:/etc/otelcol/config.yaml
+    command: ['--config=/etc/otelcol/config.yaml']
+    profiles:
+      - observability
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  default:
+    name: agent-ui-dev

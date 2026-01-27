@@ -1,0 +1,47 @@
+# db-init .dockerignore
+# Defense-in-depth: prevents accidental exposure if Dockerfile changes
+
+# Environment files (secrets - never copy)
+*.env
+.env*
+!.env.example
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# Git
+.git
+.github
+.gitignore
+
+# Dependencies (installed in container)
+node_modules
+
+# Build output
+.next
+out
+
+# IDE/Editor
+.idea
+.vscode
+*.swp
+*.swo
+
+# Documentation
+docs
+*.md
+
+# Testing
+coverage
+test-results
+e2e
+
+# AI tooling
+.claude
+.serena
+.gemini

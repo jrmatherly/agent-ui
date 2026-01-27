@@ -1,0 +1,89 @@
+# =============================================================================
+# Agent UI - Production Compose
+# =============================================================================
+#
+# REQUIRES: agentos-docker running first (provides PostgreSQL and Redis)
+#
+# When used standalone: connects via host.docker.internal
+# When used with workspace root compose.yaml: connects via agentos network
+#
+# Usage:
+#   Standalone (after starting agentos-docker):
+#     docker compose up
+#
+#   Full-stack (from workspace root):
+#     cd .. && docker compose up
+#
+# =============================================================================
+
+name: agent-ui
+
+services:
+  # Database initialization (run once to create tables)
+  db-init:
+    # image: ghcr.io/jrmatherly/agent-ui-db-init:latest
+    build:
+      context: .
+      dockerfile: docker/db-init/Dockerfile
+    networks:
+      - agentos
+    environment:
+      # When orchestrated: use agentos-db directly
+      # When standalone: override with host.docker.internal
+      - DATABASE_URL=${DATABASE_URL:-postgresql://agno:agno@agentos-db:5432/agent_ui}
+      - DB_MAX_RETRIES=30
+      - DB_RETRY_INTERVAL=2
+    # Exits after initialization
+    restart: 'no'
+
+  # Frontend
+  agent-ui:
+    # image: ghcr.io/jrmatherly/agent-ui:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - agentos
+    ports:
+      - '3000:3000'
+    healthcheck:
+      test:
+        ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    environment:
+      # AgentOS API
+      - NEXT_PUBLIC_AGENT_OS_URL=${NEXT_PUBLIC_AGENT_OS_URL:-http://agentos:8000}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      # Auth
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-dev-secret-change-in-production}
+      # Shared PostgreSQL (agentos-docker), separate database
+      - DATABASE_URL=${DATABASE_URL:-postgresql://agno:agno@agentos-db:5432/agent_ui}
+      # Shared Redis (agentos-docker)
+      - REDIS_URL=${REDIS_URL:-redis://agentos-redis:6379}
+      # Fail-safe admin account (auto-created on first startup)
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+
+  # OpenTelemetry Collector (Dev Observability)
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    networks:
+      - agentos
+    ports:
+      - '4317:4317' # OTLP gRPC
+      - '4318:4318' # OTLP HTTP
+    volumes:
+      - ./dev/otel/config.yaml:/etc/otelcol/config.yaml
+    command: ['--config=/etc/otelcol/config.yaml']
+    profiles:
+      - observability
+
+networks:
+  agentos:
+    name: agentos

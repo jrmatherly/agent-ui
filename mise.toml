@@ -1,0 +1,172 @@
+# Agent UI - Mise Configuration
+min_version = "2026.1.0"
+
+# =============================================================================
+# Settings
+# =============================================================================
+[settings]
+experimental = true
+lockfile = true
+
+# =============================================================================
+# Tools
+# =============================================================================
+[tools]
+node = { version = "22", postinstall = "corepack disable 2>/dev/null || true" }
+pnpm = "10"
+
+# =============================================================================
+# Environment Variables
+# =============================================================================
+[env]
+# Load secrets from .env file (gitignored)
+_.file = [".env"]
+
+# Non-secret defaults (committed)
+# NOTE: Don't set NODE_ENV here - let Next.js manage it (development for dev, production for build)
+NEXT_TELEMETRY_DISABLED = "1"
+
+# AgentOS connection defaults
+NEXT_PUBLIC_AGENT_OS_URL = "http://localhost:7777"
+
+# Named environments: Create mise.{env}.toml files for overrides
+# Example: mise.production.toml, mise.staging.toml
+# Activate with: MISE_ENV=production mise run build
+
+# =============================================================================
+# Hooks
+# =============================================================================
+[hooks]
+# Auto-install tools when entering project
+enter = "mise install --quiet && [ -d node_modules ] || echo '→ Run: pnpm install'"
+
+# Confirmation after tools installed
+postinstall = "echo '✓ Tools ready'"
+
+# =============================================================================
+# File Watching
+# =============================================================================
+[[watch_files]]
+patterns = [
+  "src/**/*.{ts,tsx}",
+  "src/**/*.css",
+  "*.config.{ts,mjs,cjs,js}",
+  "*.md"
+]
+run = "mise run format:fix --quiet"
+
+# =============================================================================
+# Tasks
+# =============================================================================
+
+# Setup
+[tasks."install:deps"]
+description = "Install dependencies"
+run = "pnpm install --frozen-lockfile"
+alias = "i"
+
+# Development
+[tasks.dev]
+description = "Start development server"
+run = "pnpm next dev -p 3000"
+alias = "d"
+
+[tasks.build]
+description = "Production build"
+run = "pnpm next build"
+alias = "b"
+
+[tasks.start]
+description = "Start production server"
+run = "pnpm next start"
+depends = ["build"]
+
+# Code Quality
+[tasks.lint]
+description = "Run ESLint"
+run = "pnpm eslint ."
+alias = "l"
+
+[tasks."lint:fix"]
+description = "Auto-fix ESLint issues"
+run = "pnpm eslint . --fix"
+
+[tasks.format]
+description = "Check Prettier formatting"
+run = "pnpm prettier --check \"**/*.{ts,tsx,mdx}\" --cache"
+alias = "f"
+
+[tasks."format:fix"]
+description = "Auto-fix Prettier formatting"
+run = "pnpm prettier --write \"**/*.{ts,tsx,mdx}\" --cache"
+
+[tasks.typecheck]
+description = "TypeScript type checking"
+run = "pnpm tsc --noEmit"
+alias = "tc"
+
+[tasks.validate]
+description = "Run all checks (lint + format + typecheck)"
+depends = ["lint", "format", "typecheck"]
+alias = "v"
+
+# Testing
+[tasks.test]
+description = "Run Vitest unit tests"
+run = "pnpm vitest"
+alias = "t"
+
+[tasks."test:coverage"]
+description = "Run tests with coverage report"
+run = "pnpm vitest --coverage"
+
+[tasks."test:e2e"]
+description = "Run Playwright E2E tests"
+run = "pnpm playwright test"
+
+[tasks."test:e2e:install"]
+description = "Install Playwright browsers"
+run = "pnpm test:e2e:install"
+
+[tasks."test:e2e:ui"]
+description = "Run E2E tests with interactive UI"
+run = "pnpm playwright test --ui"
+
+[tasks."test:e2e:debug"]
+description = "Debug E2E tests"
+run = "pnpm playwright test --debug"
+
+# Release
+[tasks.release]
+description = "Create a new release (tag + GitHub release)"
+run = "./scripts/release.sh"
+raw = true
+
+[tasks."release:major"]
+description = "Create a major release (vX.0.0)"
+run = "./scripts/release.sh major --yes"
+
+[tasks."release:minor"]
+description = "Create a minor release (vX.Y.0)"
+run = "./scripts/release.sh minor --yes"
+
+[tasks."release:patch"]
+description = "Create a patch release (vX.Y.Z)"
+run = "./scripts/release.sh patch --yes"
+
+# Database
+[tasks."db:push"]
+description = "Push schema to database (development)"
+run = "pnpm drizzle-kit push"
+
+[tasks."db:generate"]
+description = "Generate migration files"
+run = "pnpm drizzle-kit generate"
+
+[tasks."db:migrate"]
+description = "Run database migrations"
+run = "pnpm drizzle-kit migrate"
+
+[tasks."db:studio"]
+description = "Open Drizzle Studio (database GUI)"
+run = "pnpm drizzle-kit studio"

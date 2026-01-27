@@ -1,0 +1,49 @@
+{{- if .Values.dbInit.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "agent-ui.fullname" . }}-db-init
+  labels:
+    {{- include "agent-ui.labels" . | nindent 4 }}
+    app.kubernetes.io/component: db-init
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  ttlSecondsAfterFinished: {{ .Values.dbInit.ttlSecondsAfterFinished | default 300 }}
+  backoffLimit: {{ .Values.dbInit.backoffLimit | default 3 }}
+  template:
+    metadata:
+      labels:
+        {{- include "agent-ui.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: db-init
+    spec:
+      restartPolicy: OnFailure
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: db-init
+          image: "{{ .Values.dbInit.image.repository | default .Values.image.repository }}-db-init:{{ .Values.dbInit.image.tag | default .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.dbInit.image.pullPolicy | default .Values.image.pullPolicy }}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "agent-ui.secretName" . }}
+                  key: DATABASE_URL
+            - name: DB_MAX_RETRIES
+              value: "{{ .Values.dbInit.maxRetries | default 30 }}"
+            - name: DB_RETRY_INTERVAL
+              value: "{{ .Values.dbInit.retryInterval | default 2 }}"
+          resources:
+            {{- toYaml .Values.dbInit.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

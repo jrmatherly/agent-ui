@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# IDE and editor
+.vscode/
+.idea/
+
+# AI tooling
+.claude/
+.serena/
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+mise.lock
+
+# Generated
+*.tsbuildinfo
+next-env.d.ts
+
+# Documentation
+.docs/

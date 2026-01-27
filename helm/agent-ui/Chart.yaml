@@ -1,0 +1,16 @@
+apiVersion: v2
+name: agent-ui
+description: Enterprise Agent UI for AgentOS
+type: application
+version: 0.1.0
+appVersion: '0.3.3'
+keywords:
+  - agent-ui
+  - agentos
+  - ai
+  - enterprise
+maintainers:
+  - name: Agent UI Team
+home: https://github.com/your-org/agent-ui
+sources:
+  - https://github.com/your-org/agent-ui

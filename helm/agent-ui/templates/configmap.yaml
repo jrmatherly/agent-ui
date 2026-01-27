@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "agent-ui.fullname" . }}
+  labels:
+    {{- include "agent-ui.labels" . | nindent 4 }}
+data:
+  NODE_ENV: {{ .Values.config.nodeEnv | quote }}
+  AGENTOS_URL: {{ .Values.config.agentOSUrl | quote }}
+  NEXT_PUBLIC_APP_URL: {{ .Values.config.nextPublicAppUrl | quote }}
+  {{- if .Values.database.external }}
+  DB_HOST: {{ .Values.database.host | quote }}
+  DB_PORT: {{ .Values.database.port | quote }}
+  DB_NAME: {{ .Values.database.name | quote }}
+  DB_USER: {{ .Values.database.user | quote }}
+  DB_SSL_MODE: {{ .Values.database.sslMode | quote }}
+  {{- end }}
+  {{- if .Values.redis.enabled }}
+  REDIS_HOST: {{ .Values.redis.host | quote }}
+  REDIS_PORT: {{ .Values.redis.port | quote }}
+  {{- end }}
+  {{- if .Values.observability.enabled }}
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.observability.otlpEndpoint | quote }}
+  {{- end }}

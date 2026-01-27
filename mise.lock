@@ -1,0 +1,17 @@
+[[tools.node]]
+version = "22.22.0"
+backend = "core:node"
+"platforms.linux-arm64" = { checksum = "sha256:25ba95dfb96871fa2ef977f11f95ea90818c8fa15c0f2110771db08d4ba423be", url = "https://nodejs.org/dist/v22.22.0/node-v22.22.0-linux-arm64.tar.gz"}
+"platforms.linux-x64" = { checksum = "sha256:c33c39ed9c80deddde77c960d00119918b9e352426fd604ba41638d6526a4744", url = "https://nodejs.org/dist/v22.22.0/node-v22.22.0-linux-x64.tar.gz"}
+"platforms.macos-arm64" = { checksum = "sha256:5ed4db0fcf1eaf84d91ad12462631d73bf4576c1377e192d222e48026a902640", url = "https://nodejs.org/dist/v22.22.0/node-v22.22.0-darwin-arm64.tar.gz"}
+"platforms.macos-x64" = { checksum = "sha256:5ea50c9d6dea3dfa3abb66b2656f7a4e1c8cef23432b558d45fb538c7b5dedce", url = "https://nodejs.org/dist/v22.22.0/node-v22.22.0-darwin-x64.tar.gz"}
+"platforms.windows-x64" = { checksum = "sha256:c97fa376d2becdc8863fcd3ca2dd9a83a9f3468ee7ccf7a6d076ec66a645c77a", url = "https://nodejs.org/dist/v22.22.0/node-v22.22.0-win-x64.zip"}
+
+[[tools.pnpm]]
+version = "10.28.1"
+backend = "aqua:pnpm/pnpm"
+"platforms.linux-arm64" = { checksum = "sha256:bbc6860d6c7eb33bcafe670874323cd6617b03e46f8b34163bb0691eac8156f3", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.1/pnpm-linux-arm64"}
+"platforms.linux-x64" = { checksum = "sha256:e1a90745bbab7aad1de6886e5c6da978463fe8382953d1406e0e30661d0613a1", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.1/pnpm-linux-x64"}
+"platforms.macos-arm64" = { checksum = "sha256:6c123dcd8c7eab530f51f0544e7c893a5249cabda5a9469db63262cc7a738fcb", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.1/pnpm-macos-arm64"}
+"platforms.macos-x64" = { checksum = "sha256:11cc2b5c9e6f0e1d6e2bfb414e0db3d26f07378a76c2c045ec9dbecc91050bd4", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.1/pnpm-macos-x64"}
+"platforms.windows-x64" = { checksum = "sha256:6205534c0e8acd0cc3a2da48ee8a3ece33e7e170ab84880f888edca51a795312", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.1/pnpm-win-x64.exe"}

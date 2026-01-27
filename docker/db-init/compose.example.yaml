@@ -1,0 +1,67 @@
+# =============================================================================
+# Agent UI Database Initialization - Example Compose
+# =============================================================================
+#
+# This example shows how to run agent-ui with its own PostgreSQL instance,
+# separate from agentos-docker. Useful for testing db-init in isolation.
+#
+# RECOMMENDED: Use agentos-docker's PostgreSQL for consistency.
+# See: ../../compose.yaml (connects to agentos-docker)
+#
+# Usage:
+#   docker compose -f compose.example.yaml up
+#
+# =============================================================================
+
+services:
+  # PostgreSQL with pgvector (standardized image)
+  postgres:
+    image: agnohq/pgvector:18
+    environment:
+      POSTGRES_USER: agno
+      POSTGRES_PASSWORD: agno
+      POSTGRES_DB: agent_ui
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # No SQL init needed - db-init handles extensions
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U agno -d agent_ui']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Database initialization container (runs once and exits)
+  db-init:
+    build:
+      context: ../..
+      dockerfile: docker/db-init/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://agno:agno@postgres:5432/agent_ui
+      DB_MAX_RETRIES: 30
+      DB_RETRY_INTERVAL: 2
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+
+  # Agent UI application
+  agent-ui:
+    image: ghcr.io/jrmatherly/agent-ui:latest
+    # Or build locally:
+    # build:
+    #   context: ../..
+    #   dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://agno:agno@postgres:5432/agent_ui
+      NEXT_PUBLIC_AGENT_OS_URL: http://host.docker.internal:8000
+      BETTER_AUTH_SECRET: example-secret-change-me
+    ports:
+      - '3000:3000'
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:

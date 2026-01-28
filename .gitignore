@@ -93,6 +93,7 @@ mise.*.local.toml
 
 # docs
 .docs/
+.scratchpad/
 
 # drizzle migrations (generated)
 /drizzle/

@@ -63,7 +63,7 @@ export function QuickActions() {
         <Sparkles className="text-brand h-4 w-4" />
         <h3 className="font-semibold">Quick Actions</h3>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+      <div className="grid gap-3">
         <QuickActionCard
           href="/chat"
           icon={MessageSquarePlus}

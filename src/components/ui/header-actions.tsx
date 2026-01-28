@@ -15,6 +15,8 @@ import {
 import { LogOut, User, Settings } from 'lucide-react'
 import Link from 'next/link'
 
+const DEFAULT_AVATAR = '/avatar.jpg'
+
 export function HeaderActions() {
   const router = useRouter()
   const { data: session } = useSession()
@@ -42,7 +44,7 @@ export function HeaderActions() {
           <Button variant="ghost" className="relative h-9 w-9 rounded-full">
             <Avatar className="h-9 w-9">
               <AvatarImage
-                src={user?.image || undefined}
+                src={user?.image || DEFAULT_AVATAR}
                 alt={user?.name || ''}
               />
               <AvatarFallback className="bg-brand/10 text-brand text-sm font-medium">

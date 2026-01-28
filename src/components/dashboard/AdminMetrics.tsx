@@ -3,6 +3,7 @@
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAdminMetrics } from '@/hooks/useAdminMetrics'
+import { useStore } from '@/store'
 import {
   Users,
   UserCheck,
@@ -10,7 +11,8 @@ import {
   MessageSquare,
   Clock,
   AlertTriangle,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useQueryClient } from '@tanstack/react-query'
@@ -83,6 +85,9 @@ function MetricCard({
 export function AdminMetrics() {
   const { data: metrics, isLoading, error, isRefetching } = useAdminMetrics()
   const queryClient = useQueryClient()
+  // Get agent count from store (populated by Dashboard initialization)
+  const storeAgents = useStore((state) => state.agents)
+  const agentCount = storeAgents?.length ?? 0
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ['adminMetrics'] })
@@ -128,12 +133,22 @@ export function AdminMetrics() {
           size="sm"
           onClick={handleRefresh}
           disabled={isRefetching}
-          className="text-muted-foreground"
+          className={cn(
+            'text-muted-foreground transition-all',
+            isRefetching && 'opacity-70'
+          )}
         >
-          <RefreshCw
-            className={cn('mr-2 h-4 w-4', isRefetching && 'animate-spin')}
-          />
-          Refresh
+          {isRefetching ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Refreshing...
+            </>
+          ) : (
+            <>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Refresh
+            </>
+          )}
         </Button>
       </div>
 
@@ -169,7 +184,7 @@ export function AdminMetrics() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             label="Total Agents"
-            value={metrics?.totalAgents ?? 0}
+            value={agentCount}
             description="Configured agents"
             icon={Bot}
             isLoading={isLoading}

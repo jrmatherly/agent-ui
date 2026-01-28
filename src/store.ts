@@ -114,6 +114,12 @@ export const useStore = create<Store>()(
         selectedEndpoint: state.selectedEndpoint
       }),
       onRehydrateStorage: () => (state) => {
+        // If rehydrated endpoint is empty, reset to env default
+        if (state && !state.selectedEndpoint) {
+          const defaultEndpoint =
+            process.env.NEXT_PUBLIC_AGENT_OS_URL || 'http://localhost:8000'
+          state.setSelectedEndpoint(defaultEndpoint)
+        }
         state?.setHydrated?.()
       }
     }

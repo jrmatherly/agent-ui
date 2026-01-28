@@ -8,8 +8,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 export function PinnedAgents() {
   const agents = useStore((state) => state.agents)
 
-  // Show first 3 agents as "pinned" (future: implement actual pinning)
-  const displayAgents = agents?.slice(0, 3) ?? []
+  // Show first 6 agents as "pinned" (future: implement actual pinning)
+  const displayAgents = agents?.slice(0, 6) ?? []
 
   if (displayAgents.length === 0) {
     return (
@@ -25,7 +25,7 @@ export function PinnedAgents() {
   return (
     <Card className="p-6">
       <h3 className="mb-4 font-semibold">Agents</h3>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         {displayAgents.map((agent) => (
           <Link
             key={agent.id}

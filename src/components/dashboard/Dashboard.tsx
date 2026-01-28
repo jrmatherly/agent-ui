@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useSession } from '@/lib/auth-client'
 import { useStore } from '@/store'
 import useChatActions from '@/hooks/useChatActions'
@@ -15,6 +15,10 @@ import { HeaderActions } from '@/components/ui/header-actions'
 
 const ADMIN_ROLES = ['orgAdmin', 'globalAdmin']
 
+// Default AgentOS endpoint
+const DEFAULT_ENDPOINT =
+  process.env.NEXT_PUBLIC_AGENT_OS_URL || 'http://localhost:8000'
+
 export function Dashboard() {
   const { data: session } = useSession()
   const user = session?.user
@@ -22,10 +26,21 @@ export function Dashboard() {
   const { initialize } = useChatActions()
   const hydrated = useStore((state) => state.hydrated)
   const selectedEndpoint = useStore((state) => state.selectedEndpoint)
+  const setSelectedEndpoint = useStore((state) => state.setSelectedEndpoint)
+  const hasInitialized = useRef(false)
+
+  // Ensure endpoint is set to a valid value after hydration
+  useEffect(() => {
+    if (hydrated && !selectedEndpoint) {
+      setSelectedEndpoint(DEFAULT_ENDPOINT)
+    }
+  }, [hydrated, selectedEndpoint, setSelectedEndpoint])
 
   // Initialize connection to AgentOS when Dashboard mounts
+  // Only run once after hydration with a valid endpoint
   useEffect(() => {
-    if (hydrated && selectedEndpoint) {
+    if (hydrated && selectedEndpoint && !hasInitialized.current) {
+      hasInitialized.current = true
       initialize()
     }
   }, [hydrated, selectedEndpoint, initialize])
@@ -56,10 +71,10 @@ export function Dashboard() {
 
             <div className="grid gap-6 lg:grid-cols-3">
               <div className="lg:col-span-2">
-                <QuickActions />
+                <PinnedAgents />
               </div>
               <div>
-                <PinnedAgents />
+                <QuickActions />
               </div>
             </div>
 

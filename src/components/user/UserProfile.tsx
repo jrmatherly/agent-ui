@@ -210,6 +210,8 @@ export function UserProfile({ userId }: UserProfileProps) {
   )
 }
 
+const DEFAULT_AVATAR = '/avatar.jpg'
+
 function ProfileAvatar({
   src,
   name,
@@ -220,12 +222,15 @@ function ProfileAvatar({
   initials: string
 }) {
   const [imageError, setImageError] = useState(false)
+  const imageSrc = src && !imageError ? src : DEFAULT_AVATAR
 
   return (
     <Avatar className="border-background h-24 w-24 border-4 shadow-lg">
-      {src && !imageError && (
-        <AvatarImage src={src} alt={name} onError={() => setImageError(true)} />
-      )}
+      <AvatarImage
+        src={imageSrc}
+        alt={name}
+        onError={() => setImageError(true)}
+      />
       <AvatarFallback className="bg-accent text-2xl font-semibold">
         {initials}
       </AvatarFallback>

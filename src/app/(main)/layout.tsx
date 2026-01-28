@@ -19,7 +19,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <Suspense fallback={<SidebarSkeleton />}>
         <AppSidebar />
       </Suspense>
-      <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+      <main className="flex min-h-0 flex-1 flex-col">{children}</main>
     </div>
   )
 }

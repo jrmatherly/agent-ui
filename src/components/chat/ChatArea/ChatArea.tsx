@@ -14,7 +14,7 @@ const ChatArea = () => {
   const [sessionId] = useQueryState('session')
 
   return (
-    <main className="bg-background relative m-1.5 flex grow flex-col rounded-xl">
+    <main className="bg-background relative m-1.5 flex h-full min-h-0 grow flex-col rounded-xl">
       <MessageArea />
       <div className="sticky bottom-0 ml-9 px-4 pb-2">
         <ChatInput />

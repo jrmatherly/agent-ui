@@ -1,16 +1,10 @@
 'use client'
 
-import * as React from 'react'
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from '@/components/ui/select'
 import { useStore } from '@/store'
 import { useQueryState } from 'nuqs'
 import useChatActions from '@/hooks/useChatActions'
+import { Bot, Users } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export function ModeSelector() {
   const { mode, setMode, setMessages, setSelectedModel } = useStore()
@@ -33,25 +27,31 @@ export function ModeSelector() {
   }
 
   return (
-    <>
-      <Select
-        defaultValue={mode}
-        value={mode}
-        onValueChange={(value) => handleModeChange(value as 'agent' | 'team')}
+    <div className="bg-secondary border-primary/15 flex h-9 w-full rounded-xl border p-1">
+      <button
+        onClick={() => handleModeChange('agent')}
+        className={cn(
+          'flex flex-1 items-center justify-center gap-2 rounded-lg text-xs font-medium uppercase transition-all',
+          mode === 'agent'
+            ? 'bg-background text-foreground shadow-sm'
+            : 'text-muted-foreground hover:text-foreground'
+        )}
       >
-        <SelectTrigger className="border-primary/15 bg-secondary h-9 w-full rounded-xl border text-xs font-medium uppercase">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent className="bg-secondary font-dmmono border-none shadow-lg">
-          <SelectItem value="agent" className="cursor-pointer">
-            <div className="text-xs font-medium uppercase">Agent</div>
-          </SelectItem>
-
-          <SelectItem value="team" className="cursor-pointer">
-            <div className="text-xs font-medium uppercase">Team</div>
-          </SelectItem>
-        </SelectContent>
-      </Select>
-    </>
+        <Bot className="h-3.5 w-3.5" />
+        Agent
+      </button>
+      <button
+        onClick={() => handleModeChange('team')}
+        className={cn(
+          'flex flex-1 items-center justify-center gap-2 rounded-lg text-xs font-medium uppercase transition-all',
+          mode === 'team'
+            ? 'bg-background text-foreground shadow-sm'
+            : 'text-muted-foreground hover:text-foreground'
+        )}
+      >
+        <Users className="h-3.5 w-3.5" />
+        Team
+      </button>
+    </div>
   )
 }

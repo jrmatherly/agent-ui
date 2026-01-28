@@ -88,16 +88,25 @@ export function EntitySelector() {
       <SelectTrigger className="border-primary/15 bg-secondary h-9 w-full rounded-xl border text-xs font-medium uppercase">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent className="bg-secondary font-dmmono border-none shadow-lg">
+      <SelectContent className="bg-popover text-popover-foreground font-dmmono border-none shadow-lg">
         {currentEntities.map((entity, index) => (
           <SelectItem
-            className="cursor-pointer"
+            className="cursor-pointer py-2.5"
             key={`${entity.id}-${index}`}
             value={entity.id}
           >
-            <div className="flex items-center gap-3 text-xs font-medium uppercase">
+            <div className="flex items-center gap-3">
               <Icon type={'user'} size="xs" />
-              {entity.name || entity.id}
+              <div className="flex flex-col gap-0.5">
+                <span className="text-xs font-medium uppercase">
+                  {entity.name || entity.id}
+                </span>
+                {entity.model?.model && (
+                  <span className="text-muted-foreground text-[10px] font-normal normal-case">
+                    {entity.model.model}
+                  </span>
+                )}
+              </div>
             </div>
           </SelectItem>
         ))}

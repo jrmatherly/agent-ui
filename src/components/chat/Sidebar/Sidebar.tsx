@@ -11,6 +11,7 @@ import { getProviderIcon } from '@/lib/modelProvider'
 import Sessions from './Sessions'
 import AuthToken from './AuthToken'
 import SidebarUserProfile from './SidebarUserProfile'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { isValidUrl } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useQueryState } from 'nuqs'
@@ -308,6 +309,12 @@ const Sidebar = () => {
             )}
           </>
         )}
+        <div className="border-border mt-auto flex items-center justify-between border-t pt-3">
+          <span className="text-muted-foreground text-xs font-medium uppercase">
+            Theme
+          </span>
+          <ThemeToggle />
+        </div>
         <SidebarUserProfile />
       </motion.div>
     </motion.aside>

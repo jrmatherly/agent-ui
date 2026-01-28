@@ -31,7 +31,7 @@ function SidebarUserProfile() {
   // This prevents hydration mismatch between server and client
   if (!isMounted || isLoading) {
     return (
-      <div className="border-border mt-auto border-t pt-3">
+      <div className="pt-2">
         <div className="flex items-center gap-3 p-2">
           <Skeleton className="h-8 w-8 rounded-full" />
           <div className="flex flex-1 flex-col gap-1">
@@ -61,7 +61,7 @@ function SidebarUserProfile() {
   }
 
   return (
-    <div className="border-border mt-auto border-t pt-3">
+    <div className="pt-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button

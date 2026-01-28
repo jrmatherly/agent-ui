@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ModeSelector } from '@/components/chat/Sidebar/ModeSelector'
 import { EntitySelector } from '@/components/chat/Sidebar/EntitySelector'
@@ -20,10 +21,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 const ENDPOINT_PLACEHOLDER = 'NO ENDPOINT ADDED'
 const SidebarHeader = () => (
-  <div className="flex items-center gap-2">
+  <Link
+    href="/"
+    className="flex items-center gap-2 transition-opacity hover:opacity-80"
+  >
     <Icon type="agno" size="xs" />
     <span className="text-xs font-medium text-white uppercase">Agent UI</span>
-  </div>
+  </Link>
 )
 
 const NewChatButton = ({
@@ -270,15 +274,17 @@ const Sidebar = ({ showChatControls = true }: SidebarProps) => {
         }}
       >
         <SidebarHeader />
-        <NewChatButton
-          disabled={messages.length === 0}
-          onClick={handleNewChat}
-        />
-        {isMounted && (
+        {showChatControls && (
+          <NewChatButton
+            disabled={messages.length === 0}
+            onClick={handleNewChat}
+          />
+        )}
+        {isMounted && showChatControls && (
           <>
             <Endpoint />
             <AuthToken />
-            {isEndpointActive && showChatControls && (
+            {isEndpointActive && (
               <>
                 <motion.div
                   className="flex w-full flex-col items-start gap-2"

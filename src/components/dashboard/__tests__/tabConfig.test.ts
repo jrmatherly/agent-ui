@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { DASHBOARD_TABS, getVisibleTabs, type TabConfig } from '../tabConfig'
+import { DASHBOARD_TABS, getVisibleTabs } from '../tabConfig'
 
 describe('tabConfig', () => {
   describe('DASHBOARD_TABS', () => {

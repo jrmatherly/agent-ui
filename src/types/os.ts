@@ -401,3 +401,39 @@ export interface TraceListResponse {
   data: Trace[]
   meta: Pagination
 }
+
+// Eval Types
+export interface EvalResult {
+  eval_id: string
+  input: string
+  expected_output?: string
+  actual_output: string
+  score: number
+  passed: boolean
+  feedback?: string
+  latency_ms?: number
+}
+
+export interface EvalMetrics {
+  accuracy: number
+  avg_latency_ms: number
+  total_runs: number
+  passed_count: number
+  failed_count: number
+}
+
+export interface EvalRun {
+  run_id: string
+  agent_id: string
+  eval_set_name: string
+  created_at: number
+  completed_at?: number
+  status: 'pending' | 'running' | 'completed' | 'failed'
+  results: EvalResult[]
+  metrics: EvalMetrics
+}
+
+export interface EvalListResponse {
+  data: EvalRun[]
+  meta: Pagination
+}

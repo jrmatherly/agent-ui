@@ -14,12 +14,14 @@ import Icon from '@/components/ui/icon'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { signOut } from '@/lib/auth-client'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useUIPermissions } from '@/hooks/useUIPermissions'
 
 const DEFAULT_AVATAR = '/avatar.jpg'
 
 function SidebarUserProfile() {
   const { user, isLoading, isAuthenticated } = useAuth()
   const router = useRouter()
+  const permissions = useUIPermissions()
   const [imageError, setImageError] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
 
@@ -107,11 +109,11 @@ function SidebarUserProfile() {
             Profile Settings
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push('/admin')}
+            onClick={() => router.push(permissions.nav.admin ? '/admin' : '/')}
             className="gap-2"
           >
             <Icon type="settings" size="xs" />
-            Admin Dashboard
+            {permissions.nav.admin ? 'Admin Dashboard' : 'Dashboard'}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

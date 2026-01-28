@@ -71,7 +71,7 @@ export function HeaderActions() {
           <DropdownMenuItem>
             <Link href="/chat" className="flex w-full items-center">
               <Settings className="mr-2 h-4 w-4" />
-              Chat Settings
+              Chat
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

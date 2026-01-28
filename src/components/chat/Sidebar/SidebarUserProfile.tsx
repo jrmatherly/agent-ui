@@ -15,6 +15,7 @@ import { useAuth } from '@/components/providers/AuthProvider'
 import { signOut } from '@/lib/auth-client'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useUIPermissions } from '@/hooks/useUIPermissions'
+import { ConnectionStatus } from '@/components/ui/connection-status'
 
 const DEFAULT_AVATAR = '/avatar.jpg'
 
@@ -63,7 +64,7 @@ function SidebarUserProfile() {
   }
 
   return (
-    <div className="pt-2">
+    <div className="space-y-3 pt-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
@@ -125,6 +126,12 @@ function SidebarUserProfile() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <div className="flex items-center justify-between px-2">
+        <span className="text-muted-foreground text-xs font-medium uppercase">
+          AgentOS
+        </span>
+        <ConnectionStatus />
+      </div>
     </div>
   )
 }

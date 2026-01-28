@@ -16,8 +16,6 @@
 #
 # =============================================================================
 
-name: agent-ui
-
 services:
   # Database initialization (run once to create tables)
   db-init:
@@ -87,3 +85,4 @@ services:
 networks:
   agentos:
     name: agentos
+    external: true

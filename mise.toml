@@ -27,7 +27,7 @@ _.file = [".env"]
 NEXT_TELEMETRY_DISABLED = "1"
 
 # AgentOS connection defaults
-NEXT_PUBLIC_AGENT_OS_URL = "http://localhost:7777"
+NEXT_PUBLIC_AGENT_OS_URL = "http://localhost:8000"
 
 # Named environments: Create mise.{env}.toml files for overrides
 # Example: mise.production.toml, mise.staging.toml

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Agent UI is a chat interface for AgentOS built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and Zustand. It connects to AgentOS backend instances (default: `http://localhost:7777`) and provides real-time streaming chat with AI agents and teams.
+Agent UI is a chat interface for AgentOS built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and Zustand. It connects to AgentOS backend instances (default: `http://localhost:8000`) and provides real-time streaming chat with AI agents and teams.
 
 **Requirements:** Node.js 22+, pnpm 10+ (managed via mise)
 

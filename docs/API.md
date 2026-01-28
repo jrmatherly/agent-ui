@@ -8,7 +8,7 @@ Agent UI communicates with AgentOS backend instances through a REST API. This do
 
 ```typescript
 // Default endpoint
-const DEFAULT_ENDPOINT = 'http://localhost:7777'
+const DEFAULT_ENDPOINT = 'http://localhost:8000'
 
 // Authentication header (optional)
 headers: {
@@ -36,7 +36,7 @@ Check if the AgentOS endpoint is available.
 ```typescript
 import { getStatusAPI } from '@/api/os'
 
-const status = await getStatusAPI('http://localhost:7777', authToken)
+const status = await getStatusAPI('http://localhost:8000', authToken)
 // Returns: 200 | 503
 ```
 

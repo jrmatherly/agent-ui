@@ -49,7 +49,7 @@ export async function POST(
 
   // Get AgentOS endpoint from env or request
   const agentOSUrl =
-    process.env.NEXT_PUBLIC_AGENT_OS_URL ?? 'http://localhost:7777'
+    process.env.NEXT_PUBLIC_AGENT_OS_URL ?? 'http://localhost:8000'
   const client = createKnowledgeClient(agentOSUrl, session.session.token)
 
   try {

@@ -32,7 +32,7 @@
 Default in mise.toml:
 ```toml
 NEXT_TELEMETRY_DISABLED = "1"
-NEXT_PUBLIC_AGENT_OS_URL = "http://localhost:7777"
+NEXT_PUBLIC_AGENT_OS_URL = "http://localhost:8000"
 ```
 
 Secrets loaded from `.env` via `_.file = [".env"]`

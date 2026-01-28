@@ -48,7 +48,7 @@ BETTER_AUTH_SECRET=...
 DATABASE_URL=postgresql://user:pass@host:5432/db
 
 # AgentOS connection
-NEXT_PUBLIC_AGENT_OS_URL=http://localhost:7777
+NEXT_PUBLIC_AGENT_OS_URL=http://localhost:8000
 ```
 
 > **Full env docs**: `docs/ENVIRONMENT.md`

@@ -126,14 +126,14 @@ Agent UI connects directly to your AgentOS instance, allowing you to interact wi
 
 ### 1. Configure the Endpoint
 
-By default, Agent UI connects to `http://localhost:7777`. You can easily change this by:
+By default, Agent UI connects to `http://localhost:8000`. You can easily change this by:
 
 1. Hovering over the endpoint URL in the left sidebar
 2. Clicking the edit option to modify the connection settings
 
 ### 2. Choose Your Environment
 
-- **Local Development**: Use `http://localhost:7777` (default) or your custom local port
+- **Local Development**: Use `http://localhost:8000` (default) or your custom local port
 - **Production**: Enter your production AgentOS HTTPS URL
 
 > **Warning**: Make sure your AgentOS is actually running on the specified endpoint before attempting to connect.

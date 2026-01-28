@@ -3,7 +3,8 @@
 import { useQuery } from '@tanstack/react-query'
 
 export interface DashboardStats {
-  totalSessions: number
+  /** Number of unique users with active (non-expired) sessions */
+  activeSessions: number
 }
 
 async function fetchDashboardStats(): Promise<DashboardStats> {

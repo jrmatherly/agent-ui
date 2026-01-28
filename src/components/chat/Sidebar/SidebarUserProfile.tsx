@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -21,8 +21,15 @@ function SidebarUserProfile() {
   const { user, isLoading, isAuthenticated } = useAuth()
   const router = useRouter()
   const [imageError, setImageError] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
-  if (isLoading) {
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Always render skeleton on server and during initial client hydration
+  // This prevents hydration mismatch between server and client
+  if (!isMounted || isLoading) {
     return (
       <div className="border-border mt-auto border-t pt-3">
         <div className="flex items-center gap-3 p-2">

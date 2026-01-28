@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { session } from '@/lib/db/schema'
-import { count } from 'drizzle-orm'
+import { gt, sql } from 'drizzle-orm'
 
 /**
  * GET /api/dashboard/stats
@@ -18,14 +18,16 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Get total sessions count (all time)
-    const [totalSessionsResult] = await db
-      .select({ count: count() })
+    // Get count of currently active sessions (non-expired, unique users)
+    // This represents the number of users currently logged in
+    const [activeSessionsResult] = await db
+      .select({ count: sql<number>`count(distinct ${session.userId})` })
       .from(session)
-    const totalSessions = totalSessionsResult?.count ?? 0
+      .where(gt(session.expiresAt, new Date()))
+    const activeSessions = activeSessionsResult?.count ?? 0
 
     return NextResponse.json({
-      totalSessions
+      activeSessions
     })
   } catch (error) {
     console.error('Failed to fetch dashboard stats:', error)

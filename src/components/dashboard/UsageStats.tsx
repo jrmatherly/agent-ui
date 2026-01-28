@@ -32,8 +32,8 @@ export function UsageStats() {
   const isEndpointLoading = useStore((state) => state.isEndpointLoading)
   const { data: stats } = useDashboardStats()
 
-  // Use session count from dashboard stats (accessible to all authenticated users)
-  const sessionCount = stats?.totalSessions ?? 0
+  // Active sessions = unique users currently logged in (non-expired sessions)
+  const activeSessionCount = stats?.activeSessions ?? 0
   const agentCount = agents?.length ?? 0
   const teamCount = teams?.length ?? 0
   const isConnected = agentCount > 0
@@ -57,7 +57,7 @@ export function UsageStats() {
       <div className="divide-border/50 grid grid-cols-3 divide-x">
         <StatCard
           label="Active Sessions"
-          value={sessionCount}
+          value={activeSessionCount}
           icon={MessageSquare}
         />
         <StatCard label="Agents" value={agentCount} icon={Bot} />

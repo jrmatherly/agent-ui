@@ -46,7 +46,8 @@ Quick reference for navigating project context. Detailed documentation lives in 
 | `/chat` | Chat interface |
 | `/admin` | Admin dashboard |
 | `/profile` | User profile |
-| `/knowledge` | Knowledge base |
+| `/knowledge` | Document management |
+| `/knowledge-bases` | Knowledge base containers |
 
 ## Serena Memories
 

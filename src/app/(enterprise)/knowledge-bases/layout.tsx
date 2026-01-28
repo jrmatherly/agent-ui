@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: 'Manage your team knowledge bases'
 }
 
-export default function KnowledgeLayout({
+export default function KnowledgeBasesLayout({
   children
 }: {
   children: React.ReactNode

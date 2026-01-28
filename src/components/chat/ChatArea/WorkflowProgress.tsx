@@ -159,7 +159,7 @@ export function WorkflowProgress({ steps, className }: WorkflowProgressProps) {
                         {step.error_message}
                       </div>
                     ) : step.output_preview ? (
-                      <div className="break-words whitespace-pre-wrap">
+                      <div className="wrap-break-word whitespace-pre-wrap">
                         {step.output_preview.length > 300
                           ? step.output_preview.slice(0, 300) + '...'
                           : step.output_preview}

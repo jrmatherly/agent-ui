@@ -8,6 +8,9 @@ import Audios from './Multimedia/Audios'
 import { ReferenceList } from './ReferenceList'
 import { memo } from 'react'
 import AgentThinkingLoader from './AgentThinkingLoader'
+import { TeamDelegationFlow } from './TeamDelegationFlow'
+import { WorkflowStepper } from './WorkflowStepper'
+import { StructuredOutput } from './StructuredOutput'
 
 interface MessageProps {
   message: ChatMessage
@@ -15,6 +18,25 @@ interface MessageProps {
 
 const AgentMessage = ({ message }: MessageProps) => {
   const { streamingErrorMessage } = useStore()
+  const teamDelegations = useStore((state) => state.teamDelegations)
+  const workflowSteps = useStore((state) => state.workflowSteps)
+  const mode = useStore((state) => state.mode)
+
+  // Check if content is structured JSON that should be rendered specially
+  const isStructuredOutput =
+    message.content &&
+    message.content.startsWith('{') &&
+    message.content.endsWith('}')
+
+  let parsedContent: unknown = null
+  if (isStructuredOutput) {
+    try {
+      parsedContent = JSON.parse(message.content)
+    } catch {
+      parsedContent = null
+    }
+  }
+
   let messageContent
   if (message.streamingError) {
     messageContent = (
@@ -86,7 +108,21 @@ const AgentMessage = ({ message }: MessageProps) => {
       <div className="shrink-0">
         <Icon type="agent" size="sm" />
       </div>
-      {messageContent}
+      <div className="flex-1">
+        {parsedContent ? (
+          <StructuredOutput data={parsedContent} />
+        ) : (
+          messageContent
+        )}
+
+        {/* Team delegation flow - shown in team mode when delegations exist */}
+        {mode === 'team' && teamDelegations.length > 0 && (
+          <TeamDelegationFlow delegations={teamDelegations} />
+        )}
+
+        {/* Workflow steps - shown when workflow steps are available */}
+        {workflowSteps.length > 0 && <WorkflowStepper steps={workflowSteps} />}
+      </div>
     </div>
   )
 }

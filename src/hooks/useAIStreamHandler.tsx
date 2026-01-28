@@ -9,7 +9,9 @@ import {
   RunResponseContent,
   type RunResponse,
   type PausedRunState,
-  type HITLTool
+  type HITLTool,
+  type TeamDelegation,
+  type WorkflowStep
 } from '@/types/os'
 import { constructEndpointUrl } from '@/lib/constructEndpointUrl'
 import useAIResponseStream from './useAIResponseStream'
@@ -34,6 +36,10 @@ const useAIChatStreamHandler = () => {
   const setSessionsData = useStore((state) => state.setSessionsData)
   const setCurrentRunId = useStore((state) => state.setCurrentRunId)
   const setPausedRun = useStore((state) => state.setPausedRun)
+  const setTeamDelegations = useStore((state) => state.setTeamDelegations)
+  const setWorkflowSteps = useStore((state) => state.setWorkflowSteps)
+  const teamDelegations = useStore((state) => state.teamDelegations)
+  const workflowSteps = useStore((state) => state.workflowSteps)
   const { streamResponse } = useAIResponseStream()
 
   const updateMessagesWithErrorState = useCallback(() => {
@@ -360,6 +366,70 @@ const useAIChatStreamHandler = () => {
               chunk.event === RunEvent.TeamMemoryUpdateCompleted
             ) {
               // No-op for now; could surface a lightweight UI indicator in the future
+            } else if (chunk.event === RunEvent.TeamDelegationStarted) {
+              // Team delegation started - add new delegation to state
+              const delegation: TeamDelegation = {
+                delegation_id: (chunk.event_data as Record<string, unknown>)
+                  ?.delegation_id as string,
+                from_agent: (chunk.event_data as Record<string, unknown>)
+                  ?.from_agent as string,
+                to_agent: (chunk.event_data as Record<string, unknown>)
+                  ?.to_agent as string,
+                task: (chunk.event_data as Record<string, unknown>)
+                  ?.task as string,
+                status: 'in_progress',
+                started_at: chunk.created_at ?? Math.floor(Date.now() / 1000)
+              }
+              setTeamDelegations([...teamDelegations, delegation])
+            } else if (chunk.event === RunEvent.TeamDelegationCompleted) {
+              // Team delegation completed - update existing delegation
+              const delegationId = (chunk.event_data as Record<string, unknown>)
+                ?.delegation_id as string
+              setTeamDelegations(
+                teamDelegations.map((d) =>
+                  d.delegation_id === delegationId
+                    ? {
+                        ...d,
+                        status: 'completed' as const,
+                        completed_at: chunk.created_at,
+                        result: (chunk.event_data as Record<string, unknown>)
+                          ?.result as string | undefined
+                      }
+                    : d
+                )
+              )
+            } else if (chunk.event === RunEvent.StepStarted) {
+              // Workflow step started - add new step to state
+              const step: WorkflowStep = {
+                step_id: (chunk.event_data as Record<string, unknown>)
+                  ?.step_id as string,
+                name: (chunk.event_data as Record<string, unknown>)
+                  ?.step_name as string,
+                index:
+                  ((chunk.event_data as Record<string, unknown>)
+                    ?.step_index as number) ?? workflowSteps.length,
+                status: 'running',
+                started_at: chunk.created_at
+              }
+              setWorkflowSteps([...workflowSteps, step])
+            } else if (chunk.event === RunEvent.StepCompleted) {
+              // Workflow step completed - update existing step
+              const stepId = (chunk.event_data as Record<string, unknown>)
+                ?.step_id as string
+              setWorkflowSteps(
+                workflowSteps.map((s) =>
+                  s.step_id === stepId
+                    ? {
+                        ...s,
+                        status: 'completed' as const,
+                        completed_at: chunk.created_at,
+                        output_preview: (
+                          chunk.event_data as Record<string, unknown>
+                        )?.output_preview as string | undefined
+                      }
+                    : s
+                )
+              )
             } else if (chunk.event === RunEvent.RunPaused) {
               // HITL: Agent paused waiting for user confirmation
               const pausedState: PausedRunState = {
@@ -480,7 +550,11 @@ const useAIChatStreamHandler = () => {
       setSessionId,
       processChunkToolCalls,
       setCurrentRunId,
-      setPausedRun
+      setPausedRun,
+      setTeamDelegations,
+      setWorkflowSteps,
+      teamDelegations,
+      workflowSteps
     ]
   )
 

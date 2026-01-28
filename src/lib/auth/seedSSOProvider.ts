@@ -55,7 +55,16 @@ export async function seedSSOProviderIfNeeded() {
     seeded = true
     console.log('[Auth] Microsoft Entra SSO provider seeded')
   } catch (error) {
-    console.error('[Auth] Failed to seed SSO provider:', error)
+    // During build, no auth context exists - silently skip (will seed at runtime)
+    const isUnauthorized =
+      error instanceof Error &&
+      (error.message.includes('UNAUTHORIZED') ||
+        (error as { status?: string }).status === 'UNAUTHORIZED')
+
+    if (!isUnauthorized) {
+      console.error('[Auth] Failed to seed SSO provider:', error)
+    }
+
     seeded = true // Don't retry on failure
   }
 }

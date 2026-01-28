@@ -7,7 +7,9 @@ import {
   TeamDetails,
   WorkflowDetails,
   PausedRunState,
-  type ChatMessage
+  type ChatMessage,
+  type TeamDelegation,
+  type WorkflowStep
 } from '@/types/os'
 
 interface Store {
@@ -62,6 +64,10 @@ interface Store {
   setIsSessionsLoading: (isSessionsLoading: boolean) => void
   currentRunId: string | null
   setCurrentRunId: (runId: string | null) => void
+  teamDelegations: TeamDelegation[]
+  setTeamDelegations: (delegations: TeamDelegation[]) => void
+  workflowSteps: WorkflowStep[]
+  setWorkflowSteps: (steps: WorkflowStep[]) => void
 }
 
 export const useStore = create<Store>()(
@@ -119,7 +125,12 @@ export const useStore = create<Store>()(
       setIsSessionsLoading: (isSessionsLoading) =>
         set(() => ({ isSessionsLoading })),
       currentRunId: null,
-      setCurrentRunId: (runId) => set(() => ({ currentRunId: runId }))
+      setCurrentRunId: (runId) => set(() => ({ currentRunId: runId })),
+      teamDelegations: [],
+      setTeamDelegations: (delegations) =>
+        set({ teamDelegations: delegations }),
+      workflowSteps: [],
+      setWorkflowSteps: (steps) => set({ workflowSteps: steps })
     }),
     {
       name: 'endpoint-storage',

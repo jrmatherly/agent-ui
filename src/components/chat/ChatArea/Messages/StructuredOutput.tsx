@@ -31,9 +31,7 @@ function isSimpleObject(data: unknown): data is Record<string, unknown> {
     return false
   }
   // Check if all values are primitives
-  return Object.values(data).every(
-    (v) => typeof v !== 'object' || v === null
-  )
+  return Object.values(data).every((v) => typeof v !== 'object' || v === null)
 }
 
 function JsonTree({ data, depth = 0 }: { data: unknown; depth?: number }) {

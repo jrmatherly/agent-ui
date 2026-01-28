@@ -50,3 +50,40 @@ describe('Store workflow state', () => {
     expect(useStore.getState().pausedRun).toBeNull()
   })
 })
+
+describe('Store delegation state', () => {
+  beforeEach(() => {
+    useStore.setState({
+      teamDelegations: [],
+      workflowSteps: []
+    })
+  })
+
+  it('should store team delegations', () => {
+    const delegations = [
+      {
+        delegation_id: 'del-1',
+        from_agent: 'Leader',
+        to_agent: 'Worker',
+        task: 'Do task',
+        status: 'in_progress' as const,
+        started_at: 123
+      }
+    ]
+    useStore.getState().setTeamDelegations(delegations)
+    expect(useStore.getState().teamDelegations).toEqual(delegations)
+  })
+
+  it('should store workflow steps', () => {
+    const steps = [
+      {
+        step_id: 'step-1',
+        name: 'Research',
+        index: 0,
+        status: 'completed' as const
+      }
+    ]
+    useStore.getState().setWorkflowSteps(steps)
+    expect(useStore.getState().workflowSteps).toEqual(steps)
+  })
+})

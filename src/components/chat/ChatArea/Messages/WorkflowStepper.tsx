@@ -51,7 +51,7 @@ const statusConfig = {
 
 export function WorkflowStepper({
   steps,
-  currentStepIndex
+  currentStepIndex: _currentStepIndex
 }: WorkflowStepperProps) {
   if (steps.length === 0) return null
 

@@ -5,6 +5,7 @@ import type { ChatMessage } from '@/types/os'
 import Videos from './Multimedia/Videos'
 import Images from './Multimedia/Images'
 import Audios from './Multimedia/Audios'
+import { ReferenceList } from './ReferenceList'
 import { memo } from 'react'
 import AgentThinkingLoader from './AgentThinkingLoader'
 
@@ -39,6 +40,18 @@ const AgentMessage = ({ message }: MessageProps) => {
         {message.audio && message.audio.length > 0 && (
           <Audios audio={message.audio} />
         )}
+        {message.extra_data?.references &&
+          message.extra_data.references.length > 0 && (
+            <div className="mt-3 space-y-3">
+              {message.extra_data.references.map((refData, idx) => (
+                <ReferenceList
+                  key={`ref-${idx}`}
+                  references={refData.references}
+                  query={refData.query}
+                />
+              ))}
+            </div>
+          )}
       </div>
     )
   } else if (message.response_audio) {

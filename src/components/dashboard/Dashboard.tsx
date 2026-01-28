@@ -5,15 +5,13 @@ import { useSession } from '@/lib/auth-client'
 import { useStore } from '@/store'
 import useChatActions from '@/hooks/useChatActions'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { UsageStats } from './UsageStats'
 import { QuickActions } from './QuickActions'
 import { PinnedAgents } from './PinnedAgents'
 import { RecentSessions } from './RecentSessions'
 import { TeamActivityFeed } from './TeamActivityFeed'
 import { AdminMetrics } from './AdminMetrics'
-import { HeaderActions } from '@/components/ui/header-actions'
-
-const ADMIN_ROLES = ['orgAdmin', 'globalAdmin']
+import { getVisibleTabs } from './tabConfig'
+import type { Role } from '@/lib/permissions'
 
 // Default AgentOS endpoint
 const DEFAULT_ENDPOINT =
@@ -22,12 +20,15 @@ const DEFAULT_ENDPOINT =
 export function Dashboard() {
   const { data: session } = useSession()
   const user = session?.user
-  const isAdmin = user?.role && ADMIN_ROLES.includes(user.role)
+  const userRole = (user?.role as Role) || undefined
   const { initialize } = useChatActions()
   const hydrated = useStore((state) => state.hydrated)
   const selectedEndpoint = useStore((state) => state.selectedEndpoint)
   const setSelectedEndpoint = useStore((state) => state.setSelectedEndpoint)
   const hasInitialized = useRef(false)
+
+  // Get visible tabs based on user role
+  const visibleTabs = getVisibleTabs(userRole)
 
   // Ensure endpoint is set to a valid value after hydration
   useEffect(() => {
@@ -37,7 +38,6 @@ export function Dashboard() {
   }, [hydrated, selectedEndpoint, setSelectedEndpoint])
 
   // Initialize connection to AgentOS when Dashboard mounts
-  // Only run once after hydration with a valid endpoint
   useEffect(() => {
     if (hydrated && selectedEndpoint && !hasInitialized.current) {
       hasInitialized.current = true
@@ -48,27 +48,25 @@ export function Dashboard() {
   return (
     <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Welcome{user?.name ? `, ${user.name}` : ''}
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Here&apos;s an overview of your activity
-            </p>
-          </div>
-          <HeaderActions />
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Welcome{user?.name ? `, ${user.name}` : ''}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Here&apos;s an overview of your activity
+          </p>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
+            {visibleTabs.map((tab) => (
+              <TabsTrigger key={tab.id} value={tab.id}>
+                {tab.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <UsageStats />
-
             <div className="grid gap-6 lg:grid-cols-3">
               <div className="lg:col-span-2">
                 <PinnedAgents />
@@ -84,7 +82,29 @@ export function Dashboard() {
             </div>
           </TabsContent>
 
-          {isAdmin && (
+          {visibleTabs.some((t) => t.id === 'team') && (
+            <TabsContent value="team">
+              <div className="rounded-lg border p-6">
+                <h3 className="font-semibold">Team Management</h3>
+                <p className="text-muted-foreground mt-2 text-sm">
+                  Team management features coming soon.
+                </p>
+              </div>
+            </TabsContent>
+          )}
+
+          {visibleTabs.some((t) => t.id === 'analytics') && (
+            <TabsContent value="analytics">
+              <div className="rounded-lg border p-6">
+                <h3 className="font-semibold">Analytics</h3>
+                <p className="text-muted-foreground mt-2 text-sm">
+                  Analytics dashboard coming soon.
+                </p>
+              </div>
+            </TabsContent>
+          )}
+
+          {visibleTabs.some((t) => t.id === 'admin') && (
             <TabsContent value="admin">
               <AdminMetrics />
             </TabsContent>

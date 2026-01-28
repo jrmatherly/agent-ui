@@ -10,6 +10,7 @@ import Icon from '@/components/ui/icon'
 import { getProviderIcon } from '@/lib/modelProvider'
 import Sessions from './Sessions'
 import AuthToken from './AuthToken'
+import SidebarUserProfile from './SidebarUserProfile'
 import { isValidUrl } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useQueryState } from 'nuqs'
@@ -35,15 +36,15 @@ const NewChatButton = ({
     onClick={onClick}
     disabled={disabled}
     size="lg"
-    className="bg-primary text-background hover:bg-primary/80 h-9 w-full rounded-xl text-xs font-medium"
+    className="bg-brand hover:bg-brand/90 active:bg-brand/80 h-9 w-full rounded-xl text-xs font-medium text-white transition-colors"
   >
-    <Icon type="plus-icon" size="xs" className="text-background" />
+    <Icon type="plus-icon" size="xs" className="text-white" />
     <span className="uppercase">New Chat</span>
   </Button>
 )
 
 const ModelDisplay = ({ model }: { model: string }) => (
-  <div className="border-primary/15 bg-accent text-muted flex h-9 w-full items-center gap-3 rounded-xl border p-3 text-xs font-medium uppercase">
+  <div className="border-primary/15 bg-accent text-muted-foreground flex h-9 w-full items-center gap-3 rounded-xl border p-3 text-xs font-medium uppercase">
     {(() => {
       const icon = getProviderIcon(model)
       return icon ? <Icon type={icon} className="shrink-0" size="xs" /> : null
@@ -128,7 +129,7 @@ const Endpoint = () => {
             value={endpointValue}
             onChange={(e) => setEndpointValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="border-primary/15 bg-accent text-muted flex h-9 w-full items-center rounded-xl border p-3 text-xs font-medium text-ellipsis"
+            className="border-primary/15 bg-accent text-foreground flex h-9 w-full items-center rounded-xl border p-3 text-xs font-medium text-ellipsis"
             autoFocus
           />
           <Button
@@ -172,7 +173,7 @@ const Endpoint = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <p className="text-muted text-xs font-medium">
+                  <p className="text-muted-foreground text-xs font-medium">
                     {isMounted
                       ? truncateText(selectedEndpoint, 21) ||
                         ENDPOINT_PLACEHOLDER
@@ -255,7 +256,7 @@ const Sidebar = () => {
         />
       </motion.button>
       <motion.div
-        className="flex w-60 flex-col gap-5"
+        className="flex h-full w-60 flex-col gap-5"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -20 : 0 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -307,6 +308,7 @@ const Sidebar = () => {
             )}
           </>
         )}
+        <SidebarUserProfile />
       </motion.div>
     </motion.aside>
   )

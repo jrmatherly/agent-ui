@@ -73,7 +73,7 @@ export function EntitySelector() {
   if (currentEntities.length === 0) {
     return (
       <Select disabled>
-        <SelectTrigger className="border-primary/15 bg-primaryAccent h-9 w-full rounded-xl border text-xs font-medium uppercase opacity-50">
+        <SelectTrigger className="border-primary/15 bg-secondary h-9 w-full rounded-xl border text-xs font-medium uppercase opacity-50">
           <SelectValue placeholder={`No ${mode}s Available`} />
         </SelectTrigger>
       </Select>
@@ -85,10 +85,10 @@ export function EntitySelector() {
       value={currentValue || ''}
       onValueChange={(value) => handleOnValueChange(value)}
     >
-      <SelectTrigger className="border-primary/15 bg-primaryAccent h-9 w-full rounded-xl border text-xs font-medium uppercase">
+      <SelectTrigger className="border-primary/15 bg-secondary h-9 w-full rounded-xl border text-xs font-medium uppercase">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent className="bg-primaryAccent font-dmmono border-none shadow-lg">
+      <SelectContent className="bg-secondary font-dmmono border-none shadow-lg">
         {currentEntities.map((entity, index) => (
           <SelectItem
             className="cursor-pointer"

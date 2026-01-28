@@ -3,6 +3,7 @@
 import { useStore } from '@/store'
 import { Card } from '@/components/ui/card'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { useDashboardStats } from '@/hooks/useDashboardStats'
 import { MessageSquare, Bot, Users2 } from 'lucide-react'
 
 interface StatCardProps {
@@ -28,10 +29,11 @@ function StatCard({ label, value, icon: Icon }: StatCardProps) {
 export function UsageStats() {
   const agents = useStore((state) => state.agents)
   const teams = useStore((state) => state.teams)
-  const sessionsData = useStore((state) => state.sessionsData)
   const isEndpointLoading = useStore((state) => state.isEndpointLoading)
+  const { data: stats } = useDashboardStats()
 
-  const sessionCount = sessionsData?.length ?? 0
+  // Use session count from dashboard stats (accessible to all authenticated users)
+  const sessionCount = stats?.totalSessions ?? 0
   const agentCount = agents?.length ?? 0
   const teamCount = teams?.length ?? 0
   const isConnected = agentCount > 0

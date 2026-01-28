@@ -50,7 +50,7 @@ const ChatInput = () => {
             handleSubmit()
           }
         }}
-        className="border-accent bg-primaryAccent text-primary focus:border-accent w-full border px-4 text-sm"
+        className="border-accent bg-secondary text-primary focus:border-accent w-full border px-4 text-sm"
         disabled={!(selectedAgent || teamId)}
         ref={chatInputRef}
       />
@@ -60,9 +60,9 @@ const ChatInput = () => {
           !(selectedAgent || teamId) || !inputMessage.trim() || isStreaming
         }
         size="icon"
-        className="bg-primary text-primaryAccent rounded-xl p-5"
+        className="bg-brand hover:bg-brand/90 active:bg-brand/80 rounded-xl p-5 text-white transition-colors"
       >
-        <Icon type="send" color="primaryAccent" />
+        <Icon type="send" className="text-white" />
       </Button>
     </div>
   )

@@ -64,7 +64,7 @@ const AuthToken = () => {
             onChange={(e) => setTokenValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Enter authentication token..."
-            className="border-primary/15 bg-accent text-muted placeholder:text-muted/50 flex h-9 w-full items-center rounded-xl border p-3 text-xs font-medium text-ellipsis"
+            className="border-primary/15 bg-accent text-foreground placeholder:text-muted-foreground flex h-9 w-full items-center rounded-xl border p-3 text-xs font-medium text-ellipsis"
             autoFocus
           />
           <Button
@@ -108,7 +108,7 @@ const AuthToken = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <p className="text-muted text-xs font-medium">
+                  <p className="text-muted-foreground text-xs font-medium">
                     {isMounted ? displayValue : 'NO TOKEN SET'}
                   </p>
                 </motion.div>

@@ -22,14 +22,20 @@ Avatar.displayName = 'Avatar'
 const AvatarImage = React.forwardRef<
   HTMLImageElement,
   React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, ...props }, ref) => (
-  // eslint-disable-next-line @next/next/no-img-element
-  <img
-    ref={ref}
-    className={cn('aspect-square h-full w-full', className)}
-    {...props}
-  />
-))
+>(({ className, src, ...props }, ref) => {
+  // Don't render img element with empty/missing src (causes browser warning)
+  if (!src) return null
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      ref={ref}
+      src={src}
+      className={cn('aspect-square h-full w-full', className)}
+      {...props}
+    />
+  )
+})
 AvatarImage.displayName = 'AvatarImage'
 
 const AvatarFallback = React.forwardRef<

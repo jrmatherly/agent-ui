@@ -237,7 +237,7 @@ function MemberManagement() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={member.image || ''} />
+                        {member.image && <AvatarImage src={member.image} />}
                         <AvatarFallback>
                           {member.name?.[0]?.toUpperCase() || '?'}
                         </AvatarFallback>

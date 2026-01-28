@@ -112,7 +112,14 @@ export enum RunEvent {
   TeamReasoningStep = 'TeamReasoningStep',
   TeamReasoningCompleted = 'TeamReasoningCompleted',
   TeamMemoryUpdateStarted = 'TeamMemoryUpdateStarted',
-  TeamMemoryUpdateCompleted = 'TeamMemoryUpdateCompleted'
+  TeamMemoryUpdateCompleted = 'TeamMemoryUpdateCompleted',
+  // Workflow Events
+  // Note: Verify these match AgentOS SSE output (may need adjustment)
+  WorkflowStarted = 'WorkflowStarted',
+  WorkflowCompleted = 'WorkflowCompleted',
+  WorkflowError = 'WorkflowError',
+  StepStarted = 'StepStarted',
+  StepCompleted = 'StepCompleted'
 }
 
 export interface ResponseAudio {
@@ -228,6 +235,59 @@ export interface TeamDetails {
   model?: Model
 }
 
+
+export interface Workflow {
+  workflow_id: string
+  name: string
+  description?: string
+  storage?: boolean
+}
+
+export interface WorkflowDetails {
+  id: string
+  name: string
+  db_id?: string
+  model?: Model
+}
+
+// HITL (Human-in-the-Loop) Types
+// Matches Agno API response structure for paused runs
+export interface HITLTool {
+  tool_call_id: string
+  tool_name: string
+  tool_args: Record<string, unknown>
+}
+
+export interface PausedRunState {
+  run_id: string
+  session_id: string
+  status: 'paused'
+  tools: HITLTool[]
+}
+
+// Request payload for continuing a paused run
+export interface HITLContinuePayload {
+  tools: Array<HITLTool & { confirmed: boolean }>
+  session_id: string
+  user_id?: string
+  stream?: boolean
+}
+
+// Memory Management Types
+export interface MemoryEntry {
+  memory_id: string
+  memory: string
+  topics: string[]
+  user_id?: string
+  agent_id?: string
+  created_at: string
+}
+
+export interface Memory {
+  data: MemoryEntry[]
+  total: number
+}
+
 export interface ImageData {
   revised_prompt: string
   url: string
@@ -269,6 +329,8 @@ export interface SessionEntry {
   session_name: string
   created_at: number
   updated_at?: number
+  total_tokens?: number
+  model?: string
 }
 
 export interface Pagination {
@@ -305,4 +367,37 @@ export interface ChatEntry {
     }
     created_at: number
   }
+}
+
+// Tracing Types
+export interface Span {
+  span_id: string
+  parent_span_id: string | null
+  name: string
+  start_time: number
+  end_time: number
+  duration_ms: number
+  status: 'ok' | 'error' | 'unset'
+  attributes: Record<string, unknown>
+  error_message?: string
+}
+
+export interface Trace {
+  trace_id: string
+  session_id: string
+  run_id: string
+  agent_id?: string
+  team_id?: string
+  start_time: number
+  end_time: number
+  duration_ms: number
+  status: 'ok' | 'error' | 'unset'
+  spans: Span[]
+  total_tokens?: number
+  total_cost?: number
+}
+
+export interface TraceListResponse {
+  data: Trace[]
+  meta: Pagination
 }

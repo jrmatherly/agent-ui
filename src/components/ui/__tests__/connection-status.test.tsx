@@ -15,45 +15,42 @@ describe('ConnectionStatus', () => {
   })
 
   it('should render connected status when agents exist and not loading', () => {
-    vi.mocked(useStore).mockImplementation(
-      (selector: (state: unknown) => unknown) => {
-        const state = {
-          agents: [{ id: '1', name: 'Agent 1' }],
-          isEndpointLoading: false
-        }
-        return selector(state)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(useStore).mockImplementation((selector: any) => {
+      const state = {
+        agents: [{ id: '1', name: 'Agent 1' }],
+        isEndpointLoading: false
       }
-    )
+      return selector(state)
+    })
 
     render(<ConnectionStatus />)
     expect(screen.getByText('Connected')).toBeInTheDocument()
   })
 
   it('should render connecting status when loading', () => {
-    vi.mocked(useStore).mockImplementation(
-      (selector: (state: unknown) => unknown) => {
-        const state = {
-          agents: [],
-          isEndpointLoading: true
-        }
-        return selector(state)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(useStore).mockImplementation((selector: any) => {
+      const state = {
+        agents: [],
+        isEndpointLoading: true
       }
-    )
+      return selector(state)
+    })
 
     render(<ConnectionStatus />)
     expect(screen.getByText('Connecting')).toBeInTheDocument()
   })
 
   it('should render offline status when no agents and not loading', () => {
-    vi.mocked(useStore).mockImplementation(
-      (selector: (state: unknown) => unknown) => {
-        const state = {
-          agents: [],
-          isEndpointLoading: false
-        }
-        return selector(state)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(useStore).mockImplementation((selector: any) => {
+      const state = {
+        agents: [],
+        isEndpointLoading: false
       }
-    )
+      return selector(state)
+    })
 
     render(<ConnectionStatus />)
     expect(screen.getByText('Offline')).toBeInTheDocument()

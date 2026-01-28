@@ -18,7 +18,8 @@ vi.mock('@/hooks/useUIPermissions', () => ({
 }))
 
 vi.mock('@/store', () => ({
-  useStore: vi.fn((selector) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  useStore: vi.fn((selector: any) => {
     const state = {
       agents: [{ id: '1' }],
       isEndpointLoading: false

@@ -207,7 +207,11 @@ const Endpoint = () => {
   )
 }
 
-const Sidebar = () => {
+interface SidebarProps {
+  showChatControls?: boolean
+}
+
+const Sidebar = ({ showChatControls = true }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const { clearChat, focusChatInput, initialize } = useChatActions()
   const {
@@ -274,7 +278,7 @@ const Sidebar = () => {
           <>
             <Endpoint />
             <AuthToken />
-            {isEndpointActive && (
+            {isEndpointActive && showChatControls && (
               <>
                 <motion.div
                   className="flex w-full flex-col items-start gap-2"

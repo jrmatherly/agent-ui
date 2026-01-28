@@ -3,17 +3,12 @@ import type { ChatMessage } from '@/types/os'
 import { AgentMessage, UserMessage } from './MessageItem'
 import Tooltip from '@/components/ui/tooltip'
 import { memo } from 'react'
-import {
-  ToolCallProps,
-  ReasoningStepProps,
-  ReasoningProps,
-  ReferenceData,
-  Reference
-} from '@/types/os'
+import { ToolCallProps, ReferenceData, Reference } from '@/types/os'
 import React, { type FC } from 'react'
 
 import Icon from '@/components/ui/icon'
 import ChatBlankState from './ChatBlankState'
+import ReasoningCollapsible from './ReasoningCollapsible'
 
 interface MessageListProps {
   messages: ChatMessage[]
@@ -65,17 +60,9 @@ const AgentMessageWrapper = ({ message }: MessageWrapperProps) => {
       {message.extra_data?.reasoning_steps &&
         message.extra_data.reasoning_steps.length > 0 && (
           <div className="flex items-start gap-4">
-            <Tooltip
-              delayDuration={0}
-              content={<p className="text-accent">Reasoning</p>}
-              side="top"
-            >
-              <Icon type="reasoning" size="sm" />
-            </Tooltip>
-            <div className="flex flex-col gap-3">
-              <p className="text-xs uppercase">Reasoning</p>
-              <Reasonings reasoning={message.extra_data.reasoning_steps} />
-            </div>
+            <ReasoningCollapsible
+              reasoning={message.extra_data.reasoning_steps}
+            />
           </div>
         )}
       {message.extra_data?.references &&
@@ -125,26 +112,6 @@ const AgentMessageWrapper = ({ message }: MessageWrapperProps) => {
     </div>
   )
 }
-const Reasoning: FC<ReasoningStepProps> = ({ index, stepTitle }) => (
-  <div className="text-secondary flex items-center gap-2">
-    <div className="bg-background-secondary flex h-[20px] items-center rounded-md p-2">
-      <p className="text-xs">STEP {index + 1}</p>
-    </div>
-    <p className="text-xs">{stepTitle}</p>
-  </div>
-)
-const Reasonings: FC<ReasoningProps> = ({ reasoning }) => (
-  <div className="flex flex-col items-start justify-center gap-2">
-    {reasoning.map((title, index) => (
-      <Reasoning
-        key={`${title.title}-${title.action}-${index}`}
-        stepTitle={title.title}
-        index={index}
-      />
-    ))}
-  </div>
-)
-
 const ToolComponent = memo(({ tools }: ToolCallProps) => (
   <div className="bg-accent cursor-default rounded-full px-2 py-1.5 text-xs">
     <p className="font-dmmono text-primary/80 uppercase">{tools.tool_name}</p>

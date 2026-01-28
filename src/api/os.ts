@@ -34,7 +34,7 @@ export const getStatusAPI = async (base: string): Promise<number> => {
 
 export const getAllSessionsAPI = async (
   base: string,
-  type: 'agent' | 'team',
+  type: 'agent' | 'team' | 'workflow',
   componentId: string,
   dbId: string
 ): Promise<Sessions | { data: [] }> => {
@@ -56,7 +56,7 @@ export const getAllSessionsAPI = async (
 
 export const getSessionAPI = async (
   base: string,
-  type: 'agent' | 'team',
+  type: 'agent' | 'team' | 'workflow',
   sessionId: string,
   dbId?: string
 ) => {
@@ -100,4 +100,38 @@ export const deleteTeamSessionAPI = async (
 ) => {
   const client = createAgentOSClient(base)
   return client.delete(`/teams/${teamId}/sessions/${sessionId}`)
+}
+
+export async function cancelRunAPI(
+  endpoint: string,
+  entityType: 'agent' | 'team' | 'workflow',
+  entityId: string,
+  runId: string,
+  authToken?: string
+): Promise<void> {
+  let url: string
+  if (entityType === 'agent') {
+    url = APIRoutes.CancelAgentRun(endpoint, entityId, runId)
+  } else if (entityType === 'team') {
+    url = APIRoutes.CancelTeamRun(endpoint, entityId, runId)
+  } else {
+    // Workflow cancellation not yet implemented
+    throw new Error('Workflow run cancellation is not yet supported')
+  }
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json'
+  }
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to cancel run: ${response.statusText}`)
+  }
 }

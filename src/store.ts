@@ -5,6 +5,8 @@ import {
   AgentDetails,
   SessionEntry,
   TeamDetails,
+  WorkflowDetails,
+  PausedRunState,
   type ChatMessage
 } from '@/types/os'
 
@@ -44,8 +46,12 @@ interface Store {
   setTeams: (teams: TeamDetails[]) => void
   selectedModel: string
   setSelectedModel: (model: string) => void
-  mode: 'agent' | 'team'
-  setMode: (mode: 'agent' | 'team') => void
+  mode: 'agent' | 'team' | 'workflow'
+  setMode: (mode: 'agent' | 'team' | 'workflow') => void
+  workflows: WorkflowDetails[]
+  setWorkflows: (workflows: WorkflowDetails[]) => void
+  pausedRun: PausedRunState | null
+  setPausedRun: (pausedRun: PausedRunState | null) => void
   sessionsData: SessionEntry[] | null
   setSessionsData: (
     sessionsData:
@@ -54,6 +60,8 @@ interface Store {
   ) => void
   isSessionsLoading: boolean
   setIsSessionsLoading: (isSessionsLoading: boolean) => void
+  currentRunId: string | null
+  setCurrentRunId: (runId: string | null) => void
 }
 
 export const useStore = create<Store>()(
@@ -95,6 +103,10 @@ export const useStore = create<Store>()(
       setSelectedModel: (selectedModel) => set(() => ({ selectedModel })),
       mode: 'agent',
       setMode: (mode) => set(() => ({ mode })),
+      workflows: [],
+      setWorkflows: (workflows) => set({ workflows }),
+      pausedRun: null,
+      setPausedRun: (pausedRun) => set({ pausedRun }),
       sessionsData: null,
       setSessionsData: (sessionsData) =>
         set((state) => ({
@@ -105,7 +117,9 @@ export const useStore = create<Store>()(
         })),
       isSessionsLoading: false,
       setIsSessionsLoading: (isSessionsLoading) =>
-        set(() => ({ isSessionsLoading }))
+        set(() => ({ isSessionsLoading })),
+      currentRunId: null,
+      setCurrentRunId: (runId) => set(() => ({ currentRunId: runId }))
     }),
     {
       name: 'endpoint-storage',

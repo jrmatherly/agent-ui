@@ -119,7 +119,10 @@ export enum RunEvent {
   WorkflowCompleted = 'WorkflowCompleted',
   WorkflowError = 'WorkflowError',
   StepStarted = 'StepStarted',
-  StepCompleted = 'StepCompleted'
+  StepCompleted = 'StepCompleted',
+  // Team Delegation Events
+  TeamDelegationStarted = 'TeamDelegationStarted',
+  TeamDelegationCompleted = 'TeamDelegationCompleted'
 }
 
 export interface ResponseAudio {
@@ -234,7 +237,6 @@ export interface TeamDetails {
   // Model
   model?: Model
 }
-
 
 export interface Workflow {
   workflow_id: string
@@ -436,4 +438,61 @@ export interface EvalRun {
 export interface EvalListResponse {
   data: EvalRun[]
   meta: Pagination
+}
+
+// Knowledge Base Types
+export interface KnowledgeDocument {
+  id: string
+  name: string
+  content_type: string
+  size_bytes: number
+  status: 'pending' | 'processing' | 'processed' | 'failed'
+  chunk_count: number
+  created_at: number
+  updated_at: number
+  error_message?: string
+}
+
+export interface KnowledgeChunk {
+  id: string
+  document_id: string
+  content: string
+  chunk_index: number
+  start_char: number
+  end_char: number
+  embedding_status: 'pending' | 'processing' | 'completed' | 'failed'
+  metadata: Record<string, unknown>
+}
+
+export interface KnowledgeSearchResult {
+  document_id: string
+  document_name: string
+  chunk_id: string
+  content: string
+  score: number
+  metadata: Record<string, unknown>
+}
+
+// Team Delegation Types
+export interface TeamDelegation {
+  delegation_id: string
+  from_agent: string
+  to_agent: string
+  task: string
+  status: 'pending' | 'in_progress' | 'completed' | 'failed'
+  started_at: number
+  completed_at?: number
+  result?: string
+}
+
+// Workflow Step Types
+export interface WorkflowStep {
+  step_id: string
+  name: string
+  index: number
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped'
+  started_at?: number
+  completed_at?: number
+  output_preview?: string
+  error_message?: string
 }

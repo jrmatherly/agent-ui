@@ -18,9 +18,10 @@ interface SessionResponse {
 }
 
 interface LoaderArgs {
-  entityType: 'agent' | 'team' | null
+  entityType: 'agent' | 'team' | 'workflow' | null
   agentId?: string | null
   teamId?: string | null
+  workflowId?: string | null
   dbId: string | null
 }
 
@@ -31,9 +32,16 @@ const useSessionLoader = () => {
   const setSessionsData = useStore((state) => state.setSessionsData)
 
   const getSessions = useCallback(
-    async ({ entityType, agentId, teamId, dbId }: LoaderArgs) => {
-      const selectedId = entityType === 'agent' ? agentId : teamId
+    async ({ entityType, agentId, teamId, workflowId, dbId }: LoaderArgs) => {
+      const selectedId =
+        entityType === 'agent'
+          ? agentId
+          : entityType === 'team'
+            ? teamId
+            : workflowId
       if (!selectedEndpoint || !entityType || !selectedId || !dbId) return
+      // Workflow sessions not yet implemented
+      if (entityType === 'workflow') return
 
       try {
         setIsSessionsLoading(true)
@@ -57,10 +65,17 @@ const useSessionLoader = () => {
 
   const getSession = useCallback(
     async (
-      { entityType, agentId, teamId, dbId }: LoaderArgs,
+      { entityType, agentId, teamId, workflowId, dbId }: LoaderArgs,
       sessionId: string
     ) => {
-      const selectedId = entityType === 'agent' ? agentId : teamId
+      const selectedId =
+        entityType === 'agent'
+          ? agentId
+          : entityType === 'team'
+            ? teamId
+            : workflowId
+      // Workflow sessions not yet implemented
+      if (entityType === 'workflow') return
       if (
         !selectedEndpoint ||
         !sessionId ||

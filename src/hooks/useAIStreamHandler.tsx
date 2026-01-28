@@ -4,12 +4,19 @@ import { APIRoutes } from '@/api/routes'
 
 import useChatActions from '@/hooks/useChatActions'
 import { useStore } from '../store'
-import { RunEvent, RunResponseContent, type RunResponse } from '@/types/os'
+import {
+  RunEvent,
+  RunResponseContent,
+  type RunResponse,
+  type PausedRunState,
+  type HITLTool
+} from '@/types/os'
 import { constructEndpointUrl } from '@/lib/constructEndpointUrl'
 import useAIResponseStream from './useAIResponseStream'
 import { ToolCall } from '@/types/os'
 import { useQueryState } from 'nuqs'
 import { getJsonMarkdown } from '@/lib/utils'
+import { parseGuardrailError } from '@/lib/parseGuardrailError'
 
 const useAIChatStreamHandler = () => {
   const setMessages = useStore((state) => state.setMessages)
@@ -25,6 +32,8 @@ const useAIChatStreamHandler = () => {
   )
   const setIsStreaming = useStore((state) => state.setIsStreaming)
   const setSessionsData = useStore((state) => state.setSessionsData)
+  const setCurrentRunId = useStore((state) => state.setCurrentRunId)
+  const setPausedRun = useStore((state) => state.setPausedRun)
   const { streamResponse } = useAIResponseStream()
 
   const updateMessagesWithErrorState = useCallback(() => {
@@ -180,6 +189,9 @@ const useAIChatStreamHandler = () => {
               chunk.event === RunEvent.ReasoningStarted ||
               chunk.event === RunEvent.TeamReasoningStarted
             ) {
+              if (chunk.run_id) {
+                setCurrentRunId(chunk.run_id)
+              }
               newSessionId = chunk.session_id as string
               setSessionId(chunk.session_id as string)
               if (
@@ -348,6 +360,20 @@ const useAIChatStreamHandler = () => {
               chunk.event === RunEvent.TeamMemoryUpdateCompleted
             ) {
               // No-op for now; could surface a lightweight UI indicator in the future
+            } else if (chunk.event === RunEvent.RunPaused) {
+              // HITL: Agent paused waiting for user confirmation
+              const pausedState: PausedRunState = {
+                run_id: chunk.run_id as string,
+                session_id: chunk.session_id as string,
+                status: 'paused',
+                tools: (chunk.tools ?? []) as HITLTool[]
+              }
+              setPausedRun(pausedState)
+              setIsStreaming(false)
+            } else if (chunk.event === RunEvent.RunContinued) {
+              // HITL: Agent resumed after user confirmation
+              setPausedRun(null)
+              setIsStreaming(true)
             } else if (
               chunk.event === RunEvent.RunCompleted ||
               chunk.event === RunEvent.TeamRunCompleted
@@ -397,7 +423,15 @@ const useAIChatStreamHandler = () => {
           },
           onError: (error) => {
             updateMessagesWithErrorState()
-            setStreamingErrorMessage(error.message)
+            // Check for guardrail errors (pre-hook validation failures)
+            const guardrailError = parseGuardrailError(error)
+            if (guardrailError) {
+              setStreamingErrorMessage(
+                `🛡️ ${guardrailError.trigger}: ${guardrailError.message}`
+              )
+            } else {
+              setStreamingErrorMessage(error.message)
+            }
             if (newSessionId) {
               setSessionsData(
                 (prevSessionsData) =>
@@ -425,6 +459,7 @@ const useAIChatStreamHandler = () => {
       } finally {
         focusChatInput()
         setIsStreaming(false)
+        setCurrentRunId(null)
       }
     },
     [
@@ -443,7 +478,9 @@ const useAIChatStreamHandler = () => {
       setSessionsData,
       sessionId,
       setSessionId,
-      processChunkToolCalls
+      processChunkToolCalls,
+      setCurrentRunId,
+      setPausedRun
     ]
   )
 

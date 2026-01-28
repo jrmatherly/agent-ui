@@ -1,6 +1,6 @@
 // src/types/__tests__/evals.test.ts
 import { describe, it, expect } from 'vitest'
-import type { EvalResult, EvalRun, EvalMetrics, EvalListResponse } from '../os'
+import type { EvalResult, EvalRun, EvalListResponse } from '../os'
 
 describe('Eval types', () => {
   it('should define EvalResult interface', () => {

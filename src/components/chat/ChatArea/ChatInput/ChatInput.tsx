@@ -7,6 +7,7 @@ import { useStore } from '@/store'
 import useAIChatStreamHandler from '@/hooks/useAIStreamHandler'
 import { useQueryState } from 'nuqs'
 import Icon from '@/components/ui/icon'
+import { cancelRunAPI } from '@/api/os'
 
 const ChatInput = () => {
   const { chatInputRef } = useStore()
@@ -16,6 +17,31 @@ const ChatInput = () => {
   const [teamId] = useQueryState('team')
   const [inputMessage, setInputMessage] = useState('')
   const isStreaming = useStore((state) => state.isStreaming)
+  const currentRunId = useStore((state) => state.currentRunId)
+  const mode = useStore((state) => state.mode)
+  const selectedEndpoint = useStore((state) => state.selectedEndpoint)
+  const authToken = useStore((state) => state.authToken)
+
+  const handleCancel = async () => {
+    if (!currentRunId) return
+    const entityId = mode === 'team' ? teamId : selectedAgent
+    if (!entityId) return
+
+    try {
+      await cancelRunAPI(
+        selectedEndpoint,
+        mode,
+        entityId,
+        currentRunId,
+        authToken
+      )
+    } catch (error) {
+      toast.error(
+        `Failed to cancel: ${error instanceof Error ? error.message : String(error)}`
+      )
+    }
+  }
+
   const handleSubmit = async () => {
     if (!inputMessage.trim()) return
 
@@ -54,16 +80,25 @@ const ChatInput = () => {
         disabled={!(selectedAgent || teamId)}
         ref={chatInputRef}
       />
-      <Button
-        onClick={handleSubmit}
-        disabled={
-          !(selectedAgent || teamId) || !inputMessage.trim() || isStreaming
-        }
-        size="icon"
-        className="bg-brand hover:bg-brand/90 active:bg-brand/80 rounded-xl p-5 text-white transition-colors"
-      >
-        <Icon type="send" className="text-white" />
-      </Button>
+      {isStreaming ? (
+        <Button
+          onClick={handleCancel}
+          size="icon"
+          variant="ghost"
+          className="bg-destructive/10 hover:bg-destructive/20 rounded-xl p-5 transition-colors"
+        >
+          <Icon type="stop" className="text-destructive" />
+        </Button>
+      ) : (
+        <Button
+          onClick={handleSubmit}
+          disabled={!(selectedAgent || teamId) || !inputMessage.trim()}
+          size="icon"
+          className="bg-brand hover:bg-brand/90 active:bg-brand/80 rounded-xl p-5 text-white transition-colors"
+        >
+          <Icon type="send" className="text-white" />
+        </Button>
+      )}
     </div>
   )
 }

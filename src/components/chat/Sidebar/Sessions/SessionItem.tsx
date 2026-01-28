@@ -10,6 +10,11 @@ import { useState } from 'react'
 import DeleteSessionModal from './DeleteSessionModal'
 import useChatActions from '@/hooks/useChatActions'
 import { truncateText, cn } from '@/lib/utils'
+import { TokenBadge } from '@/components/ui/token-badge'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 type SessionItemProps = SessionEntry & {
   isSelected: boolean
@@ -19,6 +24,8 @@ type SessionItemProps = SessionEntry & {
 const SessionItem = ({
   session_name: title,
   session_id,
+  total_tokens,
+  updated_at,
   isSelected,
   currentSessionId,
   onSessionClick
@@ -90,6 +97,14 @@ const SessionItem = ({
           >
             {truncateText(title, 20)}
           </h4>
+          <div className="flex items-center gap-2">
+            {total_tokens !== undefined && <TokenBadge tokens={total_tokens} />}
+            {updated_at !== undefined && (
+              <span className="text-muted-foreground text-[10px]">
+                {dayjs(updated_at * 1000).fromNow()}
+              </span>
+            )}
+          </div>
         </div>
         <Button
           variant="ghost"

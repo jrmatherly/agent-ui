@@ -1,6 +1,5 @@
 'use client'
 
-import * as React from 'react'
 import {
   Select,
   SelectTrigger,
@@ -13,9 +12,13 @@ import { useQueryState } from 'nuqs'
 import Icon from '@/components/ui/icon'
 import { useEffect } from 'react'
 import useChatActions from '@/hooks/useChatActions'
+import type { AgentDetails, TeamDetails, WorkflowDetails } from '@/types/os'
+
+type EntityType = AgentDetails | TeamDetails | WorkflowDetails
 
 export function EntitySelector() {
-  const { mode, agents, teams, setMessages, setSelectedModel } = useStore()
+  const { mode, agents, teams, workflows, setMessages, setSelectedModel } =
+    useStore()
 
   const { focusChatInput } = useChatActions()
   const [agentId, setAgentId] = useQueryState('agent', {
@@ -26,11 +29,48 @@ export function EntitySelector() {
     parse: (value) => value || undefined,
     history: 'push'
   })
+  const [workflowId, setWorkflowId] = useQueryState('workflow', {
+    parse: (value) => value || undefined,
+    history: 'push'
+  })
   const [, setSessionId] = useQueryState('session')
 
-  const currentEntities = mode === 'team' ? teams : agents
-  const currentValue = mode === 'team' ? teamId : agentId
-  const placeholder = mode === 'team' ? 'Select Team' : 'Select Agent'
+  const getCurrentEntities = (): EntityType[] => {
+    switch (mode) {
+      case 'team':
+        return teams
+      case 'workflow':
+        return workflows
+      default:
+        return agents
+    }
+  }
+
+  const getCurrentValue = (): string | undefined => {
+    switch (mode) {
+      case 'team':
+        return teamId ?? undefined
+      case 'workflow':
+        return workflowId ?? undefined
+      default:
+        return agentId ?? undefined
+    }
+  }
+
+  const getPlaceholder = (): string => {
+    switch (mode) {
+      case 'team':
+        return 'Select Team'
+      case 'workflow':
+        return 'Select Workflow'
+      default:
+        return 'Select Agent'
+    }
+  }
+
+  const currentEntities = getCurrentEntities()
+  const currentValue = getCurrentValue()
+  const placeholder = getPlaceholder()
 
   useEffect(() => {
     if (currentValue && currentEntities.length > 0) {
@@ -39,6 +79,8 @@ export function EntitySelector() {
         setSelectedModel(entity.model?.model || '')
         if (mode === 'team') {
           setTeamId(entity.id)
+        } else if (mode === 'workflow') {
+          setWorkflowId(entity.id)
         }
         if (entity.model?.model) {
           focusChatInput()
@@ -52,20 +94,29 @@ export function EntitySelector() {
     const newValue = value === currentValue ? null : value
     const selectedEntity = currentEntities.find((item) => item.id === newValue)
 
-    setSelectedModel(selectedEntity?.model?.provider || '')
+    setSelectedModel(selectedEntity?.model?.model || '')
 
-    if (mode === 'team') {
-      setTeamId(newValue)
-      setAgentId(null)
-    } else {
-      setAgentId(newValue)
-      setTeamId(null)
+    // Clear all entity selections first
+    setAgentId(null)
+    setTeamId(null)
+    setWorkflowId(null)
+
+    // Set the selected entity based on mode
+    switch (mode) {
+      case 'team':
+        setTeamId(newValue)
+        break
+      case 'workflow':
+        setWorkflowId(newValue)
+        break
+      default:
+        setAgentId(newValue)
     }
 
     setMessages([])
     setSessionId(null)
 
-    if (selectedEntity?.model?.provider) {
+    if (selectedEntity?.model?.model) {
       focusChatInput()
     }
   }

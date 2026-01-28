@@ -1014,12 +1014,14 @@ cat public.pem   # → JWT_VERIFICATION_KEY in agentos-docker
 **Step 2: Manual verification checklist**
 
 Setup:
+
 - [ ] Configure `AGENTOS_JWT_PRIVATE_KEY` in `.env.local` (with `\n` for newlines)
 - [ ] Configure `JWT_VERIFICATION_KEY` in AgentOS `mise.local.toml`
 - [ ] Start AgentOS: `docker compose up -d`
 - [ ] Start agent-ui: `mise dev`
 
 Authentication flow:
+
 - [ ] Login via Better Auth (email/password or SSO)
 - [ ] Open browser dev tools → Network tab
 - [ ] Trigger API call (navigate to chat page)
@@ -1027,16 +1029,19 @@ Authentication flow:
 - [ ] Decode JWT at jwt.io → verify `scopes` array matches user role
 
 API access:
+
 - [ ] `agents:read` → GET /agents succeeds (200)
 - [ ] `agents:run` → POST /agents/{id}/runs succeeds (200)
 - [ ] `sessions:write` → session creation works
 
 Error handling:
+
 - [ ] Test expired token → 401 with `{"detail": "Token has expired"}`
 - [ ] Test missing scope → 403 with `{"detail": "Insufficient permissions"}`
 - [ ] Test invalid signature → 401 with `{"detail": "Invalid token: ..."}`
 
 Token lifecycle:
+
 - [ ] Wait 10+ minutes → verify auto-refresh triggers before expiry
 - [ ] Logout → verify cached token cleared
 - [ ] Login again → verify fresh token issued

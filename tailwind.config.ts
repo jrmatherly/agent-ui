@@ -11,36 +11,47 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: '#FAFAFA',
-          foreground: '#18181B'
-        },
-        primaryAccent: '#18181B',
-        brand: '#FF4017',
         background: {
-          DEFAULT: '#111113',
-          secondary: '#27272A'
+          DEFAULT: 'hsl(var(--background))',
+          secondary: 'hsl(var(--background-secondary))'
+        },
+        foreground: 'hsl(var(--foreground))',
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))'
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))'
+        },
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))'
         },
         secondary: {
-          DEFAULT: '#f5f5f5',
-          foreground: '#18181B'
-        },
-        border: 'rgba(var(--color-border-default))',
-        accent: {
-          DEFAULT: '#27272A',
-          foreground: '#FAFAFA'
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))'
         },
         muted: {
-          DEFAULT: '#A1A1AA',
-          foreground: '#71717A'
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))'
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))'
         },
         destructive: {
-          DEFAULT: '#E53935',
-          foreground: '#FAFAFA'
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))'
         },
-        positive: '#22C55E',
-        ring: '#A1A1AA',
-        input: '#27272A'
+        positive: {
+          DEFAULT: 'hsl(var(--positive))',
+          foreground: 'hsl(var(--positive-foreground))'
+        },
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        brand: 'hsl(var(--brand))'
       },
       fontFamily: {
         geist: 'var(--font-geist-sans)',

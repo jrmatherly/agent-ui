@@ -3,12 +3,67 @@
 
 @layer base {
   :root {
-    --color-border-default: 255, 255, 255, 0.2;
     --scrollbar-width: 0.1rem;
+
+    /* Light theme colors */
+    --background: 0 0% 100%;
+    --background-secondary: 240 5% 96%;
+    --foreground: 240 10% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 4%;
+    --primary: 240 10% 4%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 10% 4%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 10% 4%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --positive: 142 76% 36%;
+    --positive-foreground: 0 0% 98%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 240 10% 4%;
+    --brand: 14 100% 50%;
+  }
+
+  .dark {
+    /* Refined dark theme colors for better contrast and visual separation */
+    --background: 240 6% 7%;
+    --background-secondary: 240 5% 12%;
+    --foreground: 0 0% 95%;
+    --card: 240 5% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 5% 12%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 0% 95%;
+    --primary-foreground: 240 10% 4%;
+    --secondary: 240 4% 18%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 240 4% 18%;
+    --muted-foreground: 240 5% 60%;
+    --accent: 240 4% 20%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --positive: 142 70% 40%;
+    --positive-foreground: 0 0% 98%;
+    --border: 240 4% 20%;
+    --input: 240 4% 18%;
+    --ring: 240 5% 50%;
+    --brand: 14 100% 55%;
+  }
+
+  * {
+    @apply border-border;
   }
 
   body {
-    @apply bg-background/80 text-secondary;
+    @apply bg-background text-foreground;
   }
 }
 
@@ -17,11 +72,8 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  --tw-border-opacity: 1;
   @apply bg-border;
-  border-color: rgba(255, 255, 255, var(--tw-border-opacity));
   border-radius: 9999px;
-  border-width: 1px;
 }
 
 ::-webkit-scrollbar-track {

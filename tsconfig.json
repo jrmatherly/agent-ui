@@ -36,6 +36,13 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "coverage",
+    "test-results",
+    "playwright-report",
+    ".docs",
+    "dist",
+    "out",
+    "e2e"
   ]
 }

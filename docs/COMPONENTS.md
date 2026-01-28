@@ -224,6 +224,10 @@ Custom icon system with provider-specific icons.
 | `edit` | Edit |
 | `plus-icon` | Add new |
 | `refresh` | Refresh |
+| `settings` | Settings gear |
+| `logout` | Sign out |
+| `user` | User profile |
+| `chevron-up` | Chevron up arrow |
 | ... | More in constants.tsx |
 
 **Usage:**
@@ -525,6 +529,60 @@ Left navigation panel containing entity selection and sessions.
 | `SessionItem` | Individual session |
 | `SessionBlankState` | Empty sessions state |
 | `DeleteSessionModal` | Deletion confirmation |
+| `SidebarUserProfile` | User avatar dropdown menu |
+| `ThemeToggle` | Theme switcher (Light/Dark/System) |
+
+#### SidebarUserProfile
+
+User profile dropdown in the sidebar footer.
+
+**Location:** `src/components/chat/Sidebar/SidebarUserProfile.tsx`
+
+**Features:**
+
+- Hydration-safe rendering (uses `isMounted` pattern to prevent SSR mismatch)
+- User avatar with fallback initials
+- Dropdown menu with navigation options
+- Conditional rendering when not authenticated
+
+**Menu Items:**
+
+- Profile Settings → `/profile`
+- Admin Dashboard → `/admin`
+- Sign Out (destructive action)
+
+**Usage:**
+
+```tsx
+import SidebarUserProfile from '@/components/chat/Sidebar/SidebarUserProfile'
+
+// In sidebar footer
+<SidebarUserProfile />
+```
+
+#### ThemeToggle
+
+Theme switcher with Light/Dark/System options.
+
+**Location:** `src/components/ui/theme-toggle.tsx`
+
+**Features:**
+
+- Dropdown with three theme options
+- Uses `next-themes` for theme management
+- Sun/Moon icons indicating current theme
+
+**Sidebar Integration:**
+
+```tsx
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+
+// In sidebar footer, above user profile
+<div className="border-border mt-auto flex items-center justify-between border-t pt-3">
+  <span className="text-muted-foreground text-xs font-medium uppercase">Theme</span>
+  <ThemeToggle />
+</div>
+```
 
 ---
 

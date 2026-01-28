@@ -126,6 +126,8 @@ The platform includes enterprise multi-tenant features:
 - **Components**: Functional with default exports, `'use client'` for interactive
 - **Styling**: Tailwind CSS with `cn()` utility for conditional classes
 - **State**: Use selective Zustand subscriptions: `useStore((state) => state.messages)` not `useStore()`
+- **Hydration**: Use `isMounted` state pattern for components with client-only rendering to prevent SSR mismatches
+- **Colors**: Use semantic tokens (`bg-secondary`, `text-foreground`, `bg-brand`) - avoid undefined tokens like `primaryAccent`
 
 ## Key Files
 
@@ -146,6 +148,9 @@ The platform includes enterprise multi-tenant features:
 | `src/lib/sso/providerService.ts` | SSO provider management |
 | `src/lib/knowledge/service.ts` | Knowledge base CRUD operations |
 | `src/lib/webhooks/dispatcher.ts` | Webhook event dispatch with HMAC |
+| `src/components/chat/Sidebar/SidebarUserProfile.tsx` | User profile dropdown in sidebar |
+| `src/components/ui/theme-toggle.tsx` | Theme switcher (Light/Dark/System) |
+| `docs/COMPONENTS.md` | UI component reference and patterns |
 | `helm/agent-ui/` | Kubernetes Helm chart |
 | `vitest.config.ts` | Vitest test configuration |
 | `e2e/playwright.config.ts` | Playwright E2E test configuration |

@@ -57,6 +57,7 @@ Quick reference for navigating project context. Detailed documentation lives in 
 | `mise_configuration` | mise.toml detailed reference |
 | `enterprise_features` | SSO, auth platform, webhooks, audit |
 | `dependency_upgrades_2026_01` | Breaking changes from major upgrades |
+| `ui_design_patterns` | Color tokens, flex layouts, hydration patterns |
 
 ## Quick Commands
 
@@ -79,3 +80,6 @@ mise tasks        # List all tasks
 - **Styling**: `cn()` utility + Tailwind classes
 - **State**: Selective Zustand subscriptions: `useStore((s) => s.field)`
 - **Components**: `'use client'` directive for interactive components
+- **Hydration**: Use `isMounted` pattern for client-only rendering (see `ui_design_patterns` memory)
+- **Colors**: Use `bg-secondary`, `text-foreground`, `bg-brand` (avoid undefined tokens)
+- **Flex scroll**: Use `min-h-0 flex-1 overflow-y-auto` for scrollable flex children
